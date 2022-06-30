@@ -102,6 +102,6 @@ theme: fluid
 # Deployment
 ## Docs: https://hexo.io/docs/one-command-deployment
 deploy:
- type: git
-  repo: git@github.com:<zpangxie>/<zpangxie>.github.io.git
+  type: git
+  repo: git@github.com:zpangxie/zpangxie.github.io.git
   branch: release

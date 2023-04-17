@@ -1,5 +1,9 @@
 ---
-title: 'nextTick 源码解析'
+title: nextTick 源码解析
+categories:
+  - 前端
+  - Vue
+date: 2022-07-04 22:13:59
 ---
 
 ## 前言

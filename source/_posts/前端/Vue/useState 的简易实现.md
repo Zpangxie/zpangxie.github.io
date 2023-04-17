@@ -1,5 +1,9 @@
 ---
-title: 'useState 的简易实现'
+title: useState 的简易实现
+categories:
+  - 前端
+  - Vue
+date: 2022-07-19 18:23:20
 ---
 
 首先 利用闭包的特性 将 state 声明到 function 之外 使得数据持久化

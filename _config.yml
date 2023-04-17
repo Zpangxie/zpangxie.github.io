@@ -9,12 +9,12 @@ description: ''
 keywords:
 author: Crab
 language: zh-CN
-timezone: ''
+timezone: "Asia/Shanghai"
 
 # URL
 ## Set your site url here. For example, if you use GitHub Page, set url as 'https://username.github.io/project'
-url: http://example.com
-permalink: :year/:month/:day/:title/
+url: https://blog.zpangxie.top
+permalink: :year/:month/:hash.html
 permalink_defaults:
 pretty_urls:
   trailing_index: true # Set to false to remove trailing 'index.html' from permalinks
@@ -31,7 +31,7 @@ i18n_dir: :lang
 skip_render:
 
 # Writing
-new_post_name: :title.md # File name of new posts
+new_post_name: :category/:title # File name of new posts
 default_layout: post
 titlecase: false # Transform title into titlecase
 external_link:
@@ -92,6 +92,7 @@ pagination_dir: page
 ## include:/exclude: options only apply to the 'source/' folder
 include:
 exclude:
+  - "_obsidian"
 ignore:
 
 # Extensions
@@ -105,3 +106,21 @@ deploy:
   type: git
   repo: git@github.com:Zpangxie/zpangxie.github.io.git
   branch: release
+
+################ 第三方插件 ################
+
+# Docs: https://github.com/xu-song/hexo-auto-category
+auto_category:
+  enable: true
+  depth:
+
+# Docs: https://github.com/hexojs/hexo-generator-sitemap
+sitemap:
+  path:
+    - sitemap.xml
+    - sitemap.txt
+  template: ./sitemap_tmp/sitemap_template.xml
+  template_txt: ./sitemap_tmp/sitemap_template.txt
+  rel: false
+  tags: true
+  categories: true

@@ -112,9 +112,9 @@ groups
 查看固定用户的权限组
 
 ```sh
-groups root esunr
+groups root zpangxie
 > root[用户名]: root[用户组]
-> esunr: esunr
+> zpangxie: zpangxie
 ```
 
 查看组：
@@ -200,7 +200,7 @@ ls -ld 				# 查看当前文件夹权限
 
 ```sh
 total 0 [文件列表总大小]
--rw-rw-r--[权限详情] 1[硬连接个数] esunr[创建人] esunr[归属组] 17[文件大小] Dec 5 17:34 test[文件名]
+-rw-rw-r--[权限详情] 1[硬连接个数] zpangxie[创建人] zpangxie[归属组] 17[文件大小] Dec 5 17:34 test[文件名]
 ```
 
 > 文件被创建后，默认的权限为 -rw-rw-r-- 也就是 664

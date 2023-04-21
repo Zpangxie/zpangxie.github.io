@@ -162,7 +162,7 @@ include /etc/nginx/sites-enabled/*;
 我们将 `/etc/nginx` 目录结构输出，结果如下：
 
 ```
-root@EsunR_Shinelon:/etc/nginx# tree
+root@zpangxie_pc:/etc/nginx# tree
 .
 ├── conf.d
 ├── fastcgi.conf
@@ -287,8 +287,8 @@ location ~\.php$ {
 
 虚拟主机的意思是在一台服务器上运行多个服务，通过配置，Nginx 可以帮助我们管理这些服务。通常在一个主机上运行多个服务的方案有：
 
-- 一台主机拥有一个域名，在同一个域名下配置多个端口，如 `esunr.xyz:8000` 可以访问 app1 `esunr.xyz:8001` 可以访问 app2，我们将其称为基于端口的配置方案。
-- 一台主机拥有多个域名，用户访问不同的域名可以访问到不同的应用，如 `app1.esunr.xyz` 访问 app1，`app2.esunr.xyz` 访问 app2，我们将其称为基于域名的配置方案。
+- 一台主机拥有一个域名，在同一个域名下配置多个端口，如 `zpangxie.top:8000` 可以访问 app1 `zpangxie.top:8001` 可以访问 app2，我们将其称为基于端口的配置方案。
+- 一台主机拥有多个域名，用户访问不同的域名可以访问到不同的应用，如 `app1.zpangxie.top` 访问 app1，`app2.zpangxie.top` 访问 app2，我们将其称为基于域名的配置方案。
 
 ## 5.1 基于端口的配置方案
 
@@ -319,20 +319,20 @@ Nginx 服务默认运行在 80 端口，这个端口也是用户访问一个域�
 # 请求会根据配置自动匹配
 server {
   listen 80;
-  server_name app1.esunr.xyz;
+  server_name app1.zpangxie.top;
   root /var/www/html/app1;
   index index.html
 }
 
 server {
   listen 80;
-  server_name app2.esunr.xyz;
+  server_name app2.zpangxie.top;
   root /var/www/html/app2;
   index index.html
 }
 ```
 
-这样，当用访问 `app1.esunr.xyz` 时，就会返回服务器端的 `/var/www/html/app1/index.html`。当用户访问 `app2.esunr.xyz` 时，就会返回服务器端的 `/var/www/html/app2/index.html`。
+这样，当用访问 `app1.zpangxie.top` 时，就会返回服务器端的 `/var/www/html/app1/index.html`。当用户访问 `app2.zpangxie.top` 时，就会返回服务器端的 `/var/www/html/app2/index.html`。
 
 # 6. 反向代理
 

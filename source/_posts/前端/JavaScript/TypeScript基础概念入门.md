@@ -51,7 +51,7 @@ interface Person {
 ```ts
 let xiaoming: Person = {
   id: 1,
-  name: "EsunR",
+  name: "Zpangxie",
   sex: "man",
 };
 xiaoming.age = 19;

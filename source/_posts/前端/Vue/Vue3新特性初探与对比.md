@@ -570,7 +570,7 @@ Teleport 被称为瞬间移动组件，是 Vue3 新增的组件。它可以更�
 <template>
   <div class="modal">
     <div class="modal-content center">
-      <h2>EsunR.xyz</h2>
+      <h2>zpangxie.top</h2>
     </div>
   </div>
 </template>
@@ -666,7 +666,7 @@ Dom 节点结构为：
   <teleport to="body">
     <div class="modal">
       <div class="modal-content center">
-        <h2>EsunR.xyz</h2>
+        <h2>zpangxie.top</h2>
       </div>
     </div>
   </teleport>

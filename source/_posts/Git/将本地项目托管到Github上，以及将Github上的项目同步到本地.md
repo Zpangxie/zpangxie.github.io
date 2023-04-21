@@ -25,8 +25,8 @@ date: 2021-12-21 21:50:06
 ```
 $ ssh-keygen -t rsa -C "yourEmail"
 $ Generating public/private rsa key pair.
-$ Enter file in which to save the key (/c/Users/esunr/.ssh/id_rsa): 
-$ Created directory '/c/Users/esunr/.ssh'.
+$ Enter file in which to save the key (/c/Users/zpangxie/.ssh/id_rsa): 
+$ Created directory '/c/Users/zpangxie/.ssh'.
 $ Enter passphrase (empty for no passphrase):
 $ Enter same passphrase again:
 
@@ -73,7 +73,7 @@ ssh -T git@github.com
 如果出现如下提示，则说名连接成功
 
 ```
-Hi EsunR! You've successfully authenticated, but GitHub does not provide shell access.
+Hi Zpangxie! You've successfully authenticated, but GitHub does not provide shell access.
 ```
 
 ### 3. 在Github中创建空项目
@@ -100,7 +100,7 @@ git add .
 // 提交一次初始化更改
 git commit -m "first commit"
 // 将本地与Github做远程连接
-git remote add origin git@github.com:EsunR/test.git
+git remote add origin git@github.com:Zpangxie/test.git
 // 提交代码到主分支
 git push -u origin master
 ```
@@ -142,7 +142,7 @@ $ git init
 将仓库远程源连接到Github上的该项目
 
 ```
-$ git remote add origin git@github.com:EsunR/test.git
+$ git remote add origin git@github.com:Zpangxie/test.git
 ```
 
 > PS: 如过手滑信息填写错误，使用清除指令 `$ git remote remove origin` 清除源

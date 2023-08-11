@@ -1,0 +1,810 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/crab.jpg">
+  <link rel="icon" href="/img/crab.jpg">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="Crab">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="1. 系统相关关机与重启关机指令： 1234567shutdown  [-t] 在改变到其它runlevel之前﹐告诉init多久以后关机。 [-r] 重启计算器。 [-k] 并不真正关机﹐只是送警告信号给每位登录者〔login〕。 [-h] 关机后关闭电源〔halt〕。 [-n] 不用init﹐而是自己来关机。不鼓励使用这个选项﹐而且该选项所产生的后果往往不总是你所预期得到的。 [-c] can">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Linux指令备忘录">
+<meta property="og:url" content="https://blog.zpangxie.top/2022/12/28029806aaec.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="1. 系统相关关机与重启关机指令： 1234567shutdown  [-t] 在改变到其它runlevel之前﹐告诉init多久以后关机。 [-r] 重启计算器。 [-k] 并不真正关机﹐只是送警告信号给每位登录者〔login〕。 [-h] 关机后关闭电源〔halt〕。 [-n] 不用init﹐而是自己来关机。不鼓励使用这个选项﹐而且该选项所产生的后果往往不总是你所预期得到的。 [-c] can">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2022-12-05T09:09:57.000Z">
+<meta property="article:modified_time" content="2023-08-11T03:04:50.945Z">
+<meta property="article:author" content="Crab">
+<meta property="article:tag" content="Linux">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+  
+  <title>Linux指令备忘录 - Hexo</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"blog.zpangxie.top","root":"/","version":"1.9.2","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.2.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Crab-Blog</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              &nbsp;<i class="iconfont icon-search"></i>&nbsp;
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="Linux指令备忘录"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2022-12-05 17:09" pubdate>
+          2022年12月5日 下午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          4.8k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          40 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">Linux指令备忘录</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h1 id="1-系统相关"><a href="#1-系统相关" class="headerlink" title="1. 系统相关"></a>1. 系统相关</h1><h3 id="关机与重启"><a href="#关机与重启" class="headerlink" title="关机与重启"></a>关机与重启</h3><p>关机指令：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs sh">shutdown <br> [-t] 在改变到其它runlevel之前﹐告诉init多久以后关机。<br> [-r] 重启计算器。<br> [-k] 并不真正关机﹐只是送警告信号给每位登录者〔login〕。<br> [-h] 关机后关闭电源〔halt〕。<br> [-n] 不用init﹐而是自己来关机。不鼓励使用这个选项﹐而且该选项所产生的后果往往不总是你所预期得到的。<br> [-c] cancel current process取消目前正在执行的关机程序。所以这个选项当然没有时间参数﹐但是可以输入一个用来解释的讯<br></code></pre></td></tr></table></figure>
+
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs sh">halt <br>halt = shutdown -h<br>[-n] 防止<span class="hljs-built_in">sync</span>系统调用﹐它用在用fsck修补根分区之后﹐以阻止内核用老版本的超级块〔superblock〕覆盖修补过的超级块。<br>[-w] 并不是真正的重启或关机﹐只是写wtmp〔/var/log/wtmp〕纪录。<br>[-d] 不写wtmp纪录〔已包含在选项[-n]中〕。<br>[-f] 没有调用shutdown而强制关机或重启。<br>[-i] 关机〔或重启〕前﹐关掉所有的网络接口。<br>[-p] 该选项为缺省选项。就是关机时调用poweroff。<br></code></pre></td></tr></table></figure>
+
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs csharp"><span class="hljs-keyword">init</span><br><span class="hljs-keyword">init</span> <span class="hljs-number">0</span>为关机﹐<span class="hljs-keyword">init</span> <span class="hljs-number">1</span>为重启<br></code></pre></td></tr></table></figure>
+
+<p>重启指令：</p>
+<figure class="highlight ebnf"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs ebnf"><span class="hljs-attribute">reboot</span><br></code></pre></td></tr></table></figure>
+
+<h3 id="查看端口占用"><a href="#查看端口占用" class="headerlink" title="查看端口占用"></a>查看端口占用</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs sh">netstat -ntulp | grep 3306 //查看所有3306端口使用情况<br></code></pre></td></tr></table></figure>
+
+<h3 id="删除进程"><a href="#删除进程" class="headerlink" title="删除进程"></a>删除进程</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs sh"><span class="hljs-built_in">kill</span> -9 pid<br></code></pre></td></tr></table></figure>
+
+<h1 id="2-账号相关"><a href="#2-账号相关" class="headerlink" title="2. 账号相关"></a>2. 账号相关</h1><h3 id="创建用户"><a href="#创建用户" class="headerlink" title="创建用户"></a>创建用户</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs sh">sudo useradd [Options] UserName<br></code></pre></td></tr></table></figure>
+
+<p>其中各选项含义如下：</p>
+<p>-c comment 指定一段注释性描述。<br>-d 目录 指定用户主目录，如果此目录不存在，则同时使用-m选项，可以创建主目录。<br>-g 用户组 指定用户所属的用户组。<br>-G 用户组，用户组 指定用户所属的附加组。<br>-s Shell文件 指定用户的登录Shell。<br>-u 用户号 指定用户的用户号，如果同时有-o选项，则可以重复使用其他用户的标识号。</p>
+<p>为用户添加密码：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs sh">sudo passwd UserName<br></code></pre></td></tr></table></figure>
+
+<p>通常 <code>useradd</code> 指令创建一个新用户需要对新用户进行各种初始化设置，如果不想手动设置，可以使用 <code>adduser</code> 指令快速添加一个新用户：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs sh">sudo adduser UserName<br></code></pre></td></tr></table></figure>
+
+<h3 id="用户组群"><a href="#用户组群" class="headerlink" title="用户组群"></a>用户组群</h3><p>创建组：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs sh">sudo groupadd GroupName <br></code></pre></td></tr></table></figure>
+
+<p>将用户加入组（三选一）：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs sh">sudo usermod -G GroupName UserName  <span class="hljs-comment"># 这个会把用户从其他组中去掉</span><br>sudo usermod -a GroupName UserName<br>sudo gpasswd -a UserName GroupName<br></code></pre></td></tr></table></figure>
+
+<p>查看当前用户所在组：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs sh"><span class="hljs-built_in">groups</span><br>&gt; root<br></code></pre></td></tr></table></figure>
+
+<p>查看固定用户的权限组</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs sh"><span class="hljs-built_in">groups</span> root zpangxie<br>&gt; root[用户名]: root[用户组]<br>&gt; zpangxie: zpangxie<br></code></pre></td></tr></table></figure>
+
+<p>查看组：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs sh"><span class="hljs-built_in">cat</span> /etc/group<br><br>在/etc/group 中的每条记录分四个字段：<br>第一字段：用户组名称；<br>第二字段：用户组密码；<br>第三字段：GID<br>第四字段：用户列表，每个用户之间用,号分割；本字段可以为空；如果字段为空表示用户组为GID的用户名；<br></code></pre></td></tr></table></figure>
+
+<h3 id="切换用户"><a href="#切换用户" class="headerlink" title="切换用户"></a>切换用户</h3><p>切换用户：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs sh">su [username]<br></code></pre></td></tr></table></figure>
+
+<h3 id="使用-root-用户"><a href="#使用-root-用户" class="headerlink" title="使用 root 用户"></a>使用 root 用户</h3><p>创建并登录root用户：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs sh">sudo passwd root <span class="hljs-comment"># 创建 root 用户</span><br>su 				 <span class="hljs-comment"># 登录 root 用户</span><br></code></pre></td></tr></table></figure>
+
+<h1 id="3-权限相关"><a href="#3-权限相关" class="headerlink" title="3. 权限相关"></a>3. 权限相关</h1><h3 id="权限基本知识"><a href="#权限基本知识" class="headerlink" title="权限基本知识"></a>权限基本知识</h3><p>权限示例：<code>-rw-rw-r--</code></p>
+<p><strong>权限一共有10位数其中：</strong></p>
+<ul>
+<li><p>最前面那个 <code>-</code> 代表的是类型：<code>-</code> 代表文件，<code>d</code> 代表文件夹</p>
+</li>
+<li><p>中间那三个 <code>rw-</code> 代表的是所有者（user）</p>
+</li>
+<li><p>然后那三个 <code>rw-</code> 代表的是组群（group）</p>
+</li>
+<li><p>最后那三个 <code>r--</code> 代表的是其他人（other）</p>
+</li>
+</ul>
+<p><strong>rwx 的含义：</strong></p>
+<p>r 表示文件可以被读（read），w 表示文件可以被写（write），x 表示文件可以被执行（如果它是程序的话）。</p>
+<p><strong>用数字代替rwx：</strong></p>
+<ul>
+<li><p>r &#x3D; 4</p>
+</li>
+<li><p>w &#x3D; 2</p>
+</li>
+<li><p>x &#x3D; 1</p>
+</li>
+</ul>
+<p><strong>Tips：</strong></p>
+<ul>
+<li><p>如果递归删除一个文件夹，文件夹内有当前用户没有权限的文件的话，会跳过删除，只删除有权限的文件。</p>
+</li>
+<li><p>如果一个文件是只读属性，用户去强制修改后原来的文件会被命名为 <code>FileName~</code> 的形式保留下来。</p>
+</li>
+</ul>
+<h3 id="权限的查看"><a href="#权限的查看" class="headerlink" title="权限的查看"></a>权限的查看</h3><p>查看文件权限：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs sh"><span class="hljs-built_in">ls</span> -l FileName  <span class="hljs-comment"># 查看指定文件权限</span><br><span class="hljs-built_in">ls</span> -l 			<span class="hljs-comment"># 查看当前文件夹所有文件的权限详情，如果有子文件是文件夹，则列出文件夹权限详情</span><br></code></pre></td></tr></table></figure>
+
+<p>查看文件夹权限：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs sh"><span class="hljs-built_in">ls</span> -ld FolderName   <span class="hljs-comment"># 查看指定文件夹权限</span><br><span class="hljs-built_in">ls</span> -ld 				<span class="hljs-comment"># 查看当前文件夹权限</span><br></code></pre></td></tr></table></figure>
+
+<p>权限输出：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs sh">total 0 [文件列表总大小]<br>-rw-rw-r--[权限详情] 1[硬连接个数] zpangxie[创建人] zpangxie[归属组] 17[文件大小] Dec 5 17:34 <span class="hljs-built_in">test</span>[文件名]<br></code></pre></td></tr></table></figure>
+
+<blockquote>
+<p>文件被创建后，默认的权限为 -rw-rw-r– 也就是 664</p>
+</blockquote>
+<h3 id="权限的修改"><a href="#权限的修改" class="headerlink" title="权限的修改"></a>权限的修改</h3><p>修改文件权限：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs sh"><span class="hljs-built_in">chmod</span> 777 FileName<br></code></pre></td></tr></table></figure>
+
+<p>递归修改文件权限：</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs apache"><span class="hljs-attribute">chmod</span> -R <span class="hljs-number">777</span> FolderName<br></code></pre></td></tr></table></figure>
+
+<p>如果递归修改权限的文件夹中有当前执行指令用户没有权限的文件，那么就会出现提醒拒绝修改，只修改用户有权限的文件。</p>
+<p>修改文件的归属组：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs sh"><span class="hljs-built_in">chown</span> [-R] 用户名:群组名 文件或目录<br></code></pre></td></tr></table></figure>
+
+<h1 id="4-文件相关"><a href="#4-文件相关" class="headerlink" title="4. 文件相关"></a>4. 文件相关</h1><h3 id="复制文件"><a href="#复制文件" class="headerlink" title="复制文件"></a>复制文件</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs sh"><span class="hljs-built_in">cp</span> [Option] SorceFile TargetFile<br><span class="hljs-built_in">cp</span> -r FolderName TargetFolder	 	<span class="hljs-comment"># 复制文件夹，移动文件夹不受制于权限，文件的权限信息会一并被复制</span><br><span class="hljs-built_in">cp</span> -r FolderName1/* FolderName2		<span class="hljs-comment"># 将 FolderName1 下的文件全部覆盖到 FolderName2 下，覆盖文件不会有提示</span><br><span class="hljs-built_in">cp</span> -r -i FloderName1 FolderName2 	<span class="hljs-comment"># 将 FolderName1 下的文件全部覆盖到 FolderName2 下，覆盖文件会有提示</span><br></code></pre></td></tr></table></figure>
+
+<blockquote>
+<p>文件复制默认覆盖，但是文件夹递归复制不会覆盖文件</p>
+</blockquote>
+<p>参数说明：</p>
+<p>-a:是指archive的意思，也说是指复制所有的目录</p>
+<p>-d:若源文件为连接文件(link file)，则复制连接文件属性而非文件本身</p>
+<p>-f:强制(force)，若有重复或其它疑问时，不会询问用户，而强制复制</p>
+<p>-i:若目标文件(destination)已存在，在覆盖时会先询问是否真的操作</p>
+<p>-l:建立硬连接(hard link)的连接文件，而非复制文件本身</p>
+<p>-p:与文件的属性一起复制，而非使用默认属性</p>
+<p>-r:递归复制，用于目录的复制操作</p>
+<p>-s:复制成符号连接文件(symbolic link)，即“快捷方式”文件</p>
+<p>-u:若目标文件比源文件旧，更新目标文件 </p>
+<h3 id="压缩文件处理"><a href="#压缩文件处理" class="headerlink" title="压缩文件处理"></a>压缩文件处理</h3><p><strong><code>.tar</code> 文件</strong></p>
+<p>压缩：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs sh">tar -zcvf distFilePath（生成压缩包的目录） originFilePath（要压缩的文件目录）<br></code></pre></td></tr></table></figure>
+
+<blockquote>
+<p>示例：tar -zcvf &#x2F;home&#x2F;xahot.tar.gz &#x2F;xahot</p>
+</blockquote>
+<p>解压：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs sh">tar -zcxf targetFile<br></code></pre></td></tr></table></figure>
+
+<p><strong><code>.zip</code> 文件</strong></p>
+<p>压缩：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs sh">zip -r distFilePath originFilePath/* -r <span class="hljs-comment"># r表示递归</span><br></code></pre></td></tr></table></figure>
+
+<blockquote>
+<p>示例：zip -r .&#x2F;xahot.zip .&#x2F;* -r</p>
+</blockquote>
+<p>linux zip命令参数列表：</p>
+<ul>
+<li><p><code>-a</code> 将文件转成ASCII模式</p>
+</li>
+<li><p><code>-F</code> 尝试修复损坏的压缩文件</p>
+</li>
+<li><p><code>-h</code> 显示帮助界面</p>
+</li>
+<li><p><code>-m</code> 将文件压缩之后，删除源文件</p>
+</li>
+<li><p><code>-n</code> 特定字符串 不压缩具有特定字尾字符串的文件</p>
+</li>
+<li><p><code>-o</code> 将压缩文件内的所有文件的最新变动时间设为压缩时候的时间</p>
+</li>
+<li><p><code>-q</code> 安静模式，在压缩的时候不显示指令的执行过程</p>
+</li>
+<li><p><code>-r</code> 将指定的目录下的所有子目录以及文件一起处理</p>
+</li>
+<li><p><code>-S</code> 包含系统文件和隐含文件（S是大写）</p>
+</li>
+<li><p><code>-t</code> 日期 把压缩文件的最后修改日期设为指定的日期，日期格式为mmddyyyy</p>
+</li>
+</ul>
+<p>解压：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs sh">unzip tragetFile <span class="hljs-comment"># 解压到当前目录</span><br></code></pre></td></tr></table></figure>
+
+
+<h1 id="5-应用相关"><a href="#5-应用相关" class="headerlink" title="5. 应用相关"></a>5. 应用相关</h1><h3 id="查找应用"><a href="#查找应用" class="headerlink" title="查找应用"></a>查找应用</h3><p>通过以下指令可以查找到安装过的应用：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">dpkg --get-selections | grep appName<br></code></pre></td></tr></table></figure>
+
+<p>通过以下指令查看安装的应用的详情：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs sh">dpkg -l appName<br></code></pre></td></tr></table></figure>
+
+<p>通过以下指令查找软件位置：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs sh">dpkg -L appName<br></code></pre></td></tr></table></figure>
+
+<h3 id="卸载应用"><a href="#卸载应用" class="headerlink" title="卸载应用"></a>卸载应用</h3><p><code>apt-get purge / apt-get --purge remove</code></p>
+<p>删除已安装包（不保留配置文件）。</p>
+<p>如软件包a，依赖软件包b，则执行该命令会删除a，而且不保留配置文件</p>
+<p><code>apt-get autoremove</code></p>
+<p>删除为了满足依赖而安装的，但现在不再需要的软件包（包括已安装包），保留配置文件。</p>
+<p><code>apt-get remove</code></p>
+<p>删除已安装的软件包（保留配置文件），不会删除依赖软件包，且保留配置文件。</p>
+<p><code>apt-get autoclean</code></p>
+<p>APT的底层包是dpkg, 而dpkg 安装Package时, 会将 *.deb 放在 &#x2F;var&#x2F;cache&#x2F;apt&#x2F;archives&#x2F;中，apt-get autoclean 只会删除 &#x2F;var&#x2F;cache&#x2F;apt&#x2F;archives&#x2F; 已经过期的deb。</p>
+<p><code>apt-get clean</code></p>
+<p>使用 apt-get clean 会将 &#x2F;var&#x2F;cache&#x2F;apt&#x2F;archives&#x2F; 的 所有 deb 删掉，可以理解为 rm &#x2F;var&#x2F;cache&#x2F;apt&#x2F;archives&#x2F;*.deb。</p>
+<h3 id="添加环境变量"><a href="#添加环境变量" class="headerlink" title="添加环境变量"></a>添加环境变量</h3><p>当在源码安装的过程中如果在生成内容时用 <code>prefix</code> 设置了源码安装应用的位置，那么安装的应用携带有 bin 文件，是无法自动与系统做关联的，我们就无法在 bash 中直接使用它们，与 Windows 相似的，我们需要添加系统环境变量中的 PATH 才能连接到应用的 bin 文件，这时如果直接在命令行中使用 <code>export</code> 设置 PATH 的话只是临时的，如果想要永久产生影响就还是需要去修改 <code>/etc/.profile</code> 文件，这是在系统每次启动时会自动执行的文件，我们在这里设置 PATH 会让系统在每次开机时都应用这些 PATH，与其相类似的文件还有以下几个：</p>
+<ol>
+<li><p><strong>&#x2F;etc&#x2F;profile：</strong> 此文件为系统的每个用户设置环境信息,当用户第一次登录时,该文件被执行. 并从&#x2F;etc&#x2F;profile.d目录的配置文件中搜集shell的设置。</p>
+</li>
+<li><p><strong>&#x2F;etc&#x2F;bashrc:</strong> 为每一个运行bash shell的用户执行此文件.当bash shell被打开时,该文件被读取（即每次新开一个终端，都会执行bashrc）。</p>
+</li>
+<li><p><strong>~&#x2F;.bash_profile:</strong> 每个用户都可使用该文件输入专用于自己使用的shell信息,当用户登录时,该文件仅仅执行一次。默认情况下,设置一些环境变量,执行用户的.bashrc文件。</p>
+</li>
+<li><p><strong>~&#x2F;.bashrc:</strong> 该文件包含专用于你的bash shell的bash信息,当登录时以及每次打开新的shell时,该该文件被读取。</p>
+</li>
+<li><p><strong>~&#x2F;.bash_logout:</strong> 当每次退出系统(退出bash shell)时,执行该文件. 另外,&#x2F;etc&#x2F;profile中设定的变量(全局)的可以作用于任何用户,而~&#x2F;.bashrc等中设定的变量(局部)只能继承 &#x2F;etc&#x2F;profile中的变量,他们是”父子”关系。</p>
+</li>
+<li><p><strong>~&#x2F;.bash_profile:</strong> 是交互式、login 方式进入 bash 运行的~&#x2F;.bashrc 是交互式 non-login 方式进入 bash 运行的通常二者设置大致相同，所以通常前者会调用后者。</p>
+</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs bash">sudo vim /etc/profile<br><br><span class="hljs-comment">###### /etc/profile</span><br><span class="hljs-comment"># $PATH 表示已经设置的环境变量</span><br><span class="hljs-built_in">export</span> PATH=xxx/xxx/bin:<span class="hljs-variable">$PATH</span> <br><span class="hljs-comment">######</span><br></code></pre></td></tr></table></figure>
+
+<p>保存后再运行该文件让其生效：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-built_in">source</span> /etc/profile<br></code></pre></td></tr></table></figure>
+
+<p>输出环境变量检查是否设置成功：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-built_in">echo</span> <span class="hljs-variable">$PATH</span><br></code></pre></td></tr></table></figure>
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/Linux/" class="category-chain-item">Linux</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/Linux/">#Linux</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>Linux指令备忘录</div>
+      <div>https://blog.zpangxie.top/2022/12/28029806aaec.html</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>Crab</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2022年12月5日</div>
+        </div>
+      
+      
+      <div class="license-meta-item">
+        <div>许可协议</div>
+        <div>
+          
+            
+            
+              <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+              <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                <i class="iconfont icon-by"></i>
+              </span>
+              </a>
+            
+          
+        </div>
+      </div>
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2022/12/f7b88c5a43cb.html" title="JavaScript浅拷贝与深拷贝">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">JavaScript浅拷贝与深拷贝</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2022/12/b4da60d67a0b.html" title="使用requestAnimationFrame平滑无卡顿插入100000条数据">
+                        <span class="hidden-mobile">使用requestAnimationFrame平滑无卡顿插入100000条数据</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+      <a href="https://zpangxie.github.io/" target="_blank" rel="nofollow noopener"><span>Crab</span></a>
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      headingSelector : CONFIG.toc.headingSelector || 'h1,h2,h3,h4,h5,h6',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      collapseDepth   : CONFIG.toc.collapseDepth || 0,
+      scrollSmooth    : true,
+      headingsOffset  : -boardTop
+    });
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.10/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

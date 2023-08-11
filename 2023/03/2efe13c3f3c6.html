@@ -1,0 +1,708 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/crab.jpg">
+  <link rel="icon" href="/img/crab.jpg">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="Crab">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="1. 前言数组去重是个相对于简单的需求，但是其比较考验编程人员对 Javascript 对数组 API 以及数据类型的熟悉程度。 去重的目标数组： 123let obj1 &#x3D; &amp;#123; name: &quot;花花&quot; &amp;#125;;let obj2 &#x3D; &amp;#123; name: &quot;小明&quot; &amp;#125;;var arr &#x3D; [ 1, &quot;1&quot;, 1">
+<meta property="og:type" content="article">
+<meta property="og:title" content="整理JavaScript数组去重的种种方法">
+<meta property="og:url" content="https://blog.zpangxie.top/2023/03/2efe13c3f3c6.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="1. 前言数组去重是个相对于简单的需求，但是其比较考验编程人员对 Javascript 对数组 API 以及数据类型的熟悉程度。 去重的目标数组： 123let obj1 &#x3D; &amp;#123; name: &quot;花花&quot; &amp;#125;;let obj2 &#x3D; &amp;#123; name: &quot;小明&quot; &amp;#125;;var arr &#x3D; [ 1, &quot;1&quot;, 1">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-03-12T15:10:28.000Z">
+<meta property="article:modified_time" content="2023-08-11T03:04:50.949Z">
+<meta property="article:author" content="Crab">
+<meta property="article:tag" content="面试题">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+  
+  <title>整理JavaScript数组去重的种种方法 - Hexo</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"blog.zpangxie.top","root":"/","version":"1.9.2","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.2.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Crab-Blog</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              &nbsp;<i class="iconfont icon-search"></i>&nbsp;
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="整理JavaScript数组去重的种种方法"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2023-03-12 23:10" pubdate>
+          2023年3月12日 晚上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          5.3k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          45 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">整理JavaScript数组去重的种种方法</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h1 id="1-前言"><a href="#1-前言" class="headerlink" title="1. 前言"></a>1. 前言</h1><p>数组去重是个相对于简单的需求，但是其比较考验编程人员对 Javascript 对数组 API 以及数据类型的熟悉程度。</p>
+<p>去重的目标数组：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs js"><span class="hljs-keyword">let</span> obj1 = &#123; <span class="hljs-attr">name</span>: <span class="hljs-string">&quot;花花&quot;</span> &#125;;<br><span class="hljs-keyword">let</span> obj2 = &#123; <span class="hljs-attr">name</span>: <span class="hljs-string">&quot;小明&quot;</span> &#125;;<br><span class="hljs-keyword">var</span> arr = [ <span class="hljs-number">1</span>, <span class="hljs-string">&quot;1&quot;</span>, <span class="hljs-number">1</span>, <span class="hljs-string">&quot;NaN&quot;</span>, <span class="hljs-literal">undefined</span>, obj2, <span class="hljs-literal">null</span>, <span class="hljs-literal">undefined</span>, <span class="hljs-title class_">NaN</span>, <span class="hljs-title class_">NaN</span>, <span class="hljs-number">1</span>, obj1, <span class="hljs-literal">null</span>, obj1, obj2 ];<br></code></pre></td></tr></table></figure>
+
+<h1 id="2-使用-Javascript-中某些数据类型的值不会重复的特性进行去重"><a href="#2-使用-Javascript-中某些数据类型的值不会重复的特性进行去重" class="headerlink" title="2. 使用 Javascript 中某些数据类型的值不会重复的特性进行去重"></a>2. 使用 Javascript 中某些数据类型的值不会重复的特性进行去重</h1><h2 id="2-1-使用-Set-结构"><a href="#2-1-使用-Set-结构" class="headerlink" title="2.1 使用 Set 结构"></a>2.1 使用 Set 结构</h2><p>使用 Set 结构进行数组去重是 ES6 环境下最为推荐的方式，其特性就是不允许数组中出现重复的元素：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs js"><span class="hljs-keyword">function</span> <span class="hljs-title function_">uniqueBySet</span>(<span class="hljs-params">arr</span>) &#123;<br>  <span class="hljs-keyword">return</span> <span class="hljs-title class_">Array</span>.<span class="hljs-title function_">from</span>(<span class="hljs-keyword">new</span> <span class="hljs-title class_">Set</span>(arr));<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<figure class="highlight scheme"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs scheme">[ <span class="hljs-number">1</span>, <span class="hljs-symbol">&#x27;1</span>&#x27;, <span class="hljs-symbol">&#x27;NaN</span>&#x27;, undefined, &#123; name: <span class="hljs-symbol">&#x27;小明</span>&#x27; &#125;, null, NaN, &#123; name: <span class="hljs-symbol">&#x27;花花</span>&#x27; &#125; ]<br></code></pre></td></tr></table></figure>
+
+<p>甚至还可以更加精简：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs js">[...<span class="hljs-keyword">new</span> <span class="hljs-title class_">Set</span>(arr)]<br></code></pre></td></tr></table></figure>
+
+<h2 id="2-2-使用-Object-keys-特性"><a href="#2-2-使用-Object-keys-特性" class="headerlink" title="2.2 使用 Object keys 特性"></a>2.2 使用 Object keys 特性</h2><p>一个 Object 不允许有相同的键值，因此我们可以用其特性进行去重：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs js"><span class="hljs-keyword">function</span> <span class="hljs-title function_">uniqueByObject</span>(<span class="hljs-params">arr</span>) &#123;<br>  <span class="hljs-keyword">let</span> result = [];<br>  <span class="hljs-keyword">let</span> obj = &#123;&#125;;<br>  <span class="hljs-keyword">for</span> (<span class="hljs-keyword">let</span> item <span class="hljs-keyword">of</span> arr) &#123;<br>    <span class="hljs-keyword">if</span> (!obj[item]) &#123;<br>      result.<span class="hljs-title function_">push</span>(item);<br>      obj[item] = <span class="hljs-number">1</span>;<br>    &#125;<br>  &#125;<br>  <span class="hljs-keyword">return</span> result;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<blockquote>
+<p>但是由于 Object Key 只能为字符串，所以无法分辨 Number 与 String 的区别，并且无法分别引用类型的数据（因为会被转为 “[object Object]” 类似的字符串）。</p>
+</blockquote>
+<figure class="highlight scheme"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs scheme">[ <span class="hljs-number">1</span>, <span class="hljs-symbol">&#x27;NaN</span>&#x27;, undefined, &#123; name: <span class="hljs-symbol">&#x27;小明</span>&#x27; &#125;, null ]<br></code></pre></td></tr></table></figure>
+
+<p>如果我们将其键值存储为 <code>typeof item + item</code> 那么，<code>&quot;1&quot;</code> 被存入为键值的时候就会成为 <code>&quot;string1&quot;</code>，<code>1</code> 被存为键值的时候就会成为 <code>&quot;number1&quot;</code>，这样就能区分 Number 与 String 了。同时我们还可以使用 <code>Object.prototype.hasOwnProperty()</code> 来判断创建的对象是否有某一属性，这样更为严谨：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs js"><span class="hljs-keyword">function</span> <span class="hljs-title function_">uniqueByHasOwnProperty</span>(<span class="hljs-params">arr</span>) &#123;<br>  <span class="hljs-keyword">var</span> obj = &#123;&#125;;<br>  <span class="hljs-keyword">return</span> arr.<span class="hljs-title function_">filter</span>(<span class="hljs-keyword">function</span>(<span class="hljs-params">item</span>) &#123;<br>    <span class="hljs-keyword">return</span> obj.<span class="hljs-title function_">hasOwnProperty</span>(<span class="hljs-keyword">typeof</span> item + item)<br>      ? <span class="hljs-literal">false</span><br>      : (obj[<span class="hljs-keyword">typeof</span> item + item] = <span class="hljs-number">1</span>);<br>  &#125;);<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<blockquote>
+<p>但是此时我们仍无法区分引用类型</p>
+</blockquote>
+<figure class="highlight scheme"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs scheme">[ <span class="hljs-number">1</span>, <span class="hljs-symbol">&#x27;1</span>&#x27;, <span class="hljs-symbol">&#x27;NaN</span>&#x27;, undefined, &#123; name: <span class="hljs-symbol">&#x27;小明</span>&#x27; &#125;, null, NaN ]<br></code></pre></td></tr></table></figure>
+
+<h2 id="2-3-使用-Map-keys-特性"><a href="#2-3-使用-Map-keys-特性" class="headerlink" title="2.3 使用 Map keys 特性"></a>2.3 使用 Map keys 特性</h2><p>Map 结构优于 Object 结构的是其键值可以存放对象，这样就可以完美应用于数组去重：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs js"><span class="hljs-keyword">function</span> <span class="hljs-title function_">uniqueByMap</span>(<span class="hljs-params">arr</span>) &#123;<br>  <span class="hljs-keyword">let</span> map = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Map</span>();<br>  <span class="hljs-keyword">for</span> (<span class="hljs-keyword">let</span> item <span class="hljs-keyword">of</span> arr) &#123;<br>    map.<span class="hljs-title function_">set</span>(item, <span class="hljs-number">1</span>);<br>  &#125;<br>  <span class="hljs-comment">// map.keys() 返回的是一个新的 Map iterator 对象，需要转换为数组再返回</span><br>  <span class="hljs-keyword">return</span> <span class="hljs-title class_">Array</span>.<span class="hljs-title function_">from</span>(map.<span class="hljs-title function_">keys</span>());<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<figure class="highlight scheme"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs scheme">[ <span class="hljs-number">1</span>, <span class="hljs-symbol">&#x27;1</span>&#x27;, <span class="hljs-symbol">&#x27;NaN</span>&#x27;, undefined, &#123; name: <span class="hljs-symbol">&#x27;小明</span>&#x27; &#125;, null, NaN, &#123; name: <span class="hljs-symbol">&#x27;花花</span>&#x27; &#125; ]<br></code></pre></td></tr></table></figure>
+
+<h1 id="3-for-循环嵌套去重"><a href="#3-for-循环嵌套去重" class="headerlink" title="3. for 循环嵌套去重"></a>3. for 循环嵌套去重</h1><p>这是最简单明了的一种去重方式，也是 ES5 环境下可以使用的去重方式，其利用 <code>splice()</code> 方法，会直接修改目标数组：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs js"><span class="hljs-keyword">function</span> <span class="hljs-title function_">uniqueByFor</span>(<span class="hljs-params">arr</span>) &#123;<br>  <span class="hljs-keyword">for</span> (<span class="hljs-keyword">let</span> i = <span class="hljs-number">0</span>; i &lt; arr.<span class="hljs-property">length</span>; i++) &#123;<br>    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">let</span> j = i + <span class="hljs-number">1</span>; j &lt; arr.<span class="hljs-property">length</span>; j++) &#123;<br>      <span class="hljs-keyword">if</span> (arr[i] === arr[j]) &#123;<br>        arr.<span class="hljs-title function_">splice</span>(j, <span class="hljs-number">1</span>);<br>        j--;<br>      &#125;<br>    &#125;<br>  &#125;<br>  <span class="hljs-keyword">return</span> arr;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<blockquote>
+<p>由于 NaN &#x3D;&#x3D;&#x3D; NaN 结果为 false，所以其无法对 NaN 进行去重</p>
+</blockquote>
+<figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs pgsql">[ <span class="hljs-number">1</span>, <span class="hljs-string">&#x27;1&#x27;</span>, <span class="hljs-string">&#x27;NaN&#x27;</span>, undefined, &#123; <span class="hljs-type">name</span>: <span class="hljs-string">&#x27;小明&#x27;</span> &#125;, <span class="hljs-keyword">null</span>, <span class="hljs-keyword">NaN</span>, <span class="hljs-keyword">NaN</span>, &#123; <span class="hljs-type">name</span>: <span class="hljs-string">&#x27;花花&#x27;</span> &#125; ]<br></code></pre></td></tr></table></figure>
+
+<h1 id="4-使用-indexOf-去重"><a href="#4-使用-indexOf-去重" class="headerlink" title="4. 使用 indexOf 去重"></a>4. 使用 indexOf 去重</h1><h2 id="3-1-单纯使用-indexOf"><a href="#3-1-单纯使用-indexOf" class="headerlink" title="3.1 单纯使用 indexOf"></a>3.1 单纯使用 indexOf</h2><p>使用 <code>Array.prototype.indexOf()</code> 方法可以检索元素的出现位置，更重要的是判断元素是否存在于某个数组中。</p>
+<p>因此我们可以额外准备一个新数组，依次遍历目标数组，遍历时看当前遍历的元素是否在创建的新数组中，如果不存在就放入新数组，否则就不需要放入新数组，最终将这个新数组返回即可，且该方法可以用于 ES5 环境：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs js"><span class="hljs-keyword">function</span> <span class="hljs-title function_">uniqueByIndexOf</span>(<span class="hljs-params">arr</span>) &#123;<br>  <span class="hljs-keyword">let</span> result = [];<br>  <span class="hljs-keyword">for</span>(<span class="hljs-keyword">let</span> i = <span class="hljs-number">0</span>; i &lt; arr.<span class="hljs-property">length</span>; i++)&#123;<br>    <span class="hljs-keyword">if</span> (result.<span class="hljs-title function_">indexOf</span>(current) === -<span class="hljs-number">1</span>) &#123;<br>      result.<span class="hljs-title function_">push</span>(current);<br>    &#125;<br>  &#125;<br>  <span class="hljs-keyword">return</span> result;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<blockquote>
+<p>由于 [NaN].indexOf(NaN) 结果为 -1，所以无法对 NaN 进行去重</p>
+</blockquote>
+<figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs pgsql">[ <span class="hljs-number">1</span>, <span class="hljs-string">&#x27;1&#x27;</span>, <span class="hljs-string">&#x27;NaN&#x27;</span>, undefined, &#123; <span class="hljs-type">name</span>: <span class="hljs-string">&#x27;小明&#x27;</span> &#125;, <span class="hljs-keyword">null</span>, <span class="hljs-keyword">NaN</span>, <span class="hljs-keyword">NaN</span>, &#123; <span class="hljs-type">name</span>: <span class="hljs-string">&#x27;花花&#x27;</span> &#125; ]<br></code></pre></td></tr></table></figure>
+
+<h2 id="3-2-使用-includes-代替-indexOf-去重"><a href="#3-2-使用-includes-代替-indexOf-去重" class="headerlink" title="3.2 使用 includes 代替 indexOf 去重"></a>3.2 使用 includes 代替 indexOf 去重</h2><p>在 ES6 中引入了 <code>Array.prototype.includes()</code> 专门检测某元素是否存在于目标数组中，同时可以判断 <code>NaN</code> 类型，正好可以弥补单纯使用 <code>indexOf()</code> 进行去重的劣势：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs js"><span class="hljs-keyword">function</span> <span class="hljs-title function_">uniqueByIncludes</span>(<span class="hljs-params">arr</span>) &#123;<br>  <span class="hljs-comment">// 利用 reducer 进一步简化代码</span><br>  <span class="hljs-keyword">return</span> arr.<span class="hljs-title function_">reduce</span>(<span class="hljs-keyword">function</span>(<span class="hljs-params">prev, current</span>) &#123;<br>    <span class="hljs-keyword">return</span> prev.<span class="hljs-title function_">includes</span>(current) ? prev : [...prev, current];<br>  &#125;, []);<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<figure class="highlight scheme"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs scheme">[ <span class="hljs-number">1</span>, <span class="hljs-symbol">&#x27;1</span>&#x27;, <span class="hljs-symbol">&#x27;NaN</span>&#x27;, undefined, &#123; name: <span class="hljs-symbol">&#x27;小明</span>&#x27; &#125;, null, NaN, &#123; name: <span class="hljs-symbol">&#x27;花花</span>&#x27; &#125; ]<br></code></pre></td></tr></table></figure>
+
+
+<h2 id="3-3-使用-filter-与-indexOf-去重"><a href="#3-3-使用-filter-与-indexOf-去重" class="headerlink" title="3.3 使用 filter 与 indexOf 去重"></a>3.3 使用 filter 与 indexOf 去重</h2><p>使用 <code>indexOf()</code> 还需要创建一个空数组，利用 ES6 的 <code>filter()</code> 方法可以免除创建一个新数组。同时其思想由原来的放入新数组，改为了判断当前遍历元素是否是数组中第一个出现的：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs js"><span class="hljs-keyword">function</span> <span class="hljs-title function_">uniqueByFilter</span>(<span class="hljs-params">arr</span>) &#123;<br>  <span class="hljs-keyword">return</span> arr.<span class="hljs-title function_">filter</span>(<span class="hljs-keyword">function</span>(<span class="hljs-params">item, index</span>) &#123;<br>    <span class="hljs-comment">// 看当前元素是否是数组中第一个出现的</span><br>    <span class="hljs-keyword">return</span> arr.<span class="hljs-title function_">indexOf</span>(item) === index;<br>  &#125;);<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<blockquote>
+<p>由于 [NaN].indexOf(NaN) 结果为 -1，所以无法对 NaN 不再结果中</p>
+</blockquote>
+<figure class="highlight scheme"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs scheme">[ <span class="hljs-number">1</span>, <span class="hljs-symbol">&#x27;1</span>&#x27;, <span class="hljs-symbol">&#x27;NaN</span>&#x27;, undefined, &#123; name: <span class="hljs-symbol">&#x27;小明</span>&#x27; &#125;, null, &#123; name: <span class="hljs-symbol">&#x27;花花</span>&#x27; &#125; ]<br></code></pre></td></tr></table></figure>
+
+<h1 id="5-数组排序后去重（不稳定）"><a href="#5-数组排序后去重（不稳定）" class="headerlink" title="5. 数组排序后去重（不稳定）"></a>5. 数组排序后去重（不稳定）</h1><h2 id="5-1-使用-sort-去重"><a href="#5-1-使用-sort-去重" class="headerlink" title="5.1 使用 sort 去重"></a>5.1 使用 sort 去重</h2><p><code>Array.prototypr.sort()</code> 可以对数组进行排序，我们将数组排序后，重复的元素就会并列出现，因此可以直接遍历每个元素，如果当前元素与上一个元素并非重复，那就将其放入新数组，否则就略过，直至遍历完所有数组：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs js"><span class="hljs-keyword">function</span> <span class="hljs-title function_">uniqueBySort</span>(<span class="hljs-params">arr</span>) &#123;<br>  arr.<span class="hljs-title function_">sort</span>();<br>  <span class="hljs-keyword">let</span> result = [];<br>  <span class="hljs-keyword">for</span> (<span class="hljs-keyword">let</span> i = <span class="hljs-number">0</span>; i &lt; arr.<span class="hljs-property">length</span>; i++) &#123;<br>    <span class="hljs-comment">// 当前元素与前一个元素相比看是否相等</span><br>    <span class="hljs-comment">// 注意这里不能与后一个元素比是否相等，因为如果数组中存在 undefined 的话，arr[length + 1] 会与 undefined 相等，导致 undefined 不会被添加到数组中</span><br>    <span class="hljs-keyword">if</span> (arr[i] !== arr[i - <span class="hljs-number">1</span>]) &#123;<br>      result.<span class="hljs-title function_">push</span>(arr[i]);<br>    &#125;<br>  &#125;<br>  <span class="hljs-keyword">return</span> result;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<blockquote>
+<p>由于 sort 会将数字与字符串统一转换为数字，所以当数组中存在例如 [1, “1”, 1] 这样的元素时，会原封不动的将其排列为原有的顺序，导致后面去重失败，并且 sort 也无法对引用类型进行排序。同时由于去重前的对比操作基于 <code>===</code> 操作符的判断，因此对 NaN 类型也无法判断。</p>
+</blockquote>
+<figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs pgsql">[<br>  <span class="hljs-number">1</span>,              <span class="hljs-string">&#x27;1&#x27;</span>,<br>  <span class="hljs-number">1</span>,              <span class="hljs-string">&#x27;NaN&#x27;</span>,<br>  <span class="hljs-keyword">NaN</span>,            <span class="hljs-keyword">NaN</span>,<br>  &#123; <span class="hljs-type">name</span>: <span class="hljs-string">&#x27;小明&#x27;</span> &#125;, &#123; <span class="hljs-type">name</span>: <span class="hljs-string">&#x27;花花&#x27;</span> &#125;,<br>  &#123; <span class="hljs-type">name</span>: <span class="hljs-string">&#x27;小明&#x27;</span> &#125;, <span class="hljs-keyword">null</span>,<br>  undefined<br>]<br></code></pre></td></tr></table></figure>
+
+<h2 id="5-2-排序后用递归思想去重"><a href="#5-2-排序后用递归思想去重" class="headerlink" title="5.2 排序后用递归思想去重"></a>5.2 排序后用递归思想去重</h2><p>上一种方法还是要创建一个新数组，如果我们想要直接操作需要去重的数组，那么还需要一点递归思想：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs js"><span class="hljs-keyword">function</span> <span class="hljs-title function_">uniqueByRecursive</span>(<span class="hljs-params">arr</span>) &#123;<br>  arr.<span class="hljs-title function_">sort</span>();<br>  <span class="hljs-keyword">function</span> <span class="hljs-title function_">unique</span>(<span class="hljs-params">index</span>) &#123;<br>    <span class="hljs-keyword">if</span> (index &gt;= <span class="hljs-number">1</span>) &#123;<br>      <span class="hljs-keyword">if</span> (arr[index] === arr[index - <span class="hljs-number">1</span>]) &#123;<br>        arr.<span class="hljs-title function_">splice</span>(index, <span class="hljs-number">1</span>);<br>      &#125;<br>      <span class="hljs-title function_">unique</span>(index - <span class="hljs-number">1</span>);<br>    &#125;<br>  &#125;<br>  <span class="hljs-title function_">unique</span>(arr.<span class="hljs-property">length</span> - <span class="hljs-number">1</span>);<br>  <span class="hljs-keyword">return</span> arr;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<blockquote>
+<p>劣势与上面一致</p>
+</blockquote>
+<figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs pgsql">[<br>  <span class="hljs-number">1</span>,              <span class="hljs-string">&#x27;1&#x27;</span>,<br>  <span class="hljs-number">1</span>,              <span class="hljs-string">&#x27;NaN&#x27;</span>,<br>  <span class="hljs-keyword">NaN</span>,            <span class="hljs-keyword">NaN</span>,<br>  &#123; <span class="hljs-type">name</span>: <span class="hljs-string">&#x27;小明&#x27;</span> &#125;, &#123; <span class="hljs-type">name</span>: <span class="hljs-string">&#x27;花花&#x27;</span> &#125;,<br>  &#123; <span class="hljs-type">name</span>: <span class="hljs-string">&#x27;小明&#x27;</span> &#125;, <span class="hljs-keyword">null</span>,<br>  undefined<br>]<br></code></pre></td></tr></table></figure>
+
+<h2 id="5-2-排序后用原地算法去重（仅适用于数字）"><a href="#5-2-排序后用原地算法去重（仅适用于数字）" class="headerlink" title="5.2 排序后用原地算法去重（仅适用于数字）"></a>5.2 排序后用原地算法去重（仅适用于数字）</h2><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs js"><span class="hljs-keyword">function</span> <span class="hljs-title function_">uniqBySort</span>(<span class="hljs-params">nums</span>) &#123;<br>  <span class="hljs-keyword">const</span> sortedNums = nums.<span class="hljs-title function_">sort</span>();<br>  <span class="hljs-comment">// 当前索引位置的元素期望是不重复的元素，同时改变量表示不重复元素的个数</span><br>  <span class="hljs-keyword">let</span> noRepeatIndex = nums.<span class="hljs-property">length</span> ? <span class="hljs-number">1</span> : <span class="hljs-number">0</span>;<br>  <span class="hljs-keyword">for</span> (<span class="hljs-keyword">let</span> i = <span class="hljs-number">0</span>; i &lt; sortedNums.<span class="hljs-property">length</span>; i++) &#123;<br>    <span class="hljs-keyword">const</span> current = sortedNums[i];<br>    <span class="hljs-comment">// 如果当前元素比 noRepeatIndex-1 位置的元素要大，就将其放置到 noRepeatIndex 的位置上，并将 noRepeatIndex 向后指</span><br>    <span class="hljs-keyword">if</span> (current &gt; sortedNums[noRepeatIndex - <span class="hljs-number">1</span>]) &#123;<br>      sortedNums[noRepeatIndex] = current;<br>      noRepeatIndex++;<br>    &#125;<br>  &#125;<br>  <span class="hljs-keyword">return</span> sortedNums.<span class="hljs-title function_">slice</span>(<span class="hljs-number">0</span>, noRepeatIndex);<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h1 id="6-总结"><a href="#6-总结" class="headerlink" title="6. 总结"></a>6. 总结</h1><p>数组去重并非是难题，但是里面坑比较多，需要注意以下几点：</p>
+<ul>
+<li>利用 object keys 去重的话，注意 keys 会被转换为字符串</li>
+<li><code>indexOf()</code> 方法与 <code>===</code> 运算符都不能判断 NaN 类型</li>
+<li><code>sort()</code> 方法对字符串与对象的排序会对后续去重产生影响</li>
+</ul>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/%E5%89%8D%E7%AB%AF/" class="category-chain-item">前端</a>
+  
+  
+    <span>></span>
+    
+  <a href="/categories/%E5%89%8D%E7%AB%AF/JavaScript/" class="category-chain-item">JavaScript</a>
+  
+  
+
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/%E9%9D%A2%E8%AF%95%E9%A2%98/">#面试题</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>整理JavaScript数组去重的种种方法</div>
+      <div>https://blog.zpangxie.top/2023/03/2efe13c3f3c6.html</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>Crab</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2023年3月12日</div>
+        </div>
+      
+      
+      <div class="license-meta-item">
+        <div>许可协议</div>
+        <div>
+          
+            
+            
+              <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+              <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                <i class="iconfont icon-by"></i>
+              </span>
+              </a>
+            
+          
+        </div>
+      </div>
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2023/08/a360ef5f1032.html" title="vue-class-component 源码解析">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">vue-class-component 源码解析</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2023/01/496595df3131.html" title="Docker 常用指令整理">
+                        <span class="hidden-mobile">Docker 常用指令整理</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+      <a href="https://zpangxie.github.io/" target="_blank" rel="nofollow noopener"><span>Crab</span></a>
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      headingSelector : CONFIG.toc.headingSelector || 'h1,h2,h3,h4,h5,h6',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      collapseDepth   : CONFIG.toc.collapseDepth || 0,
+      scrollSmooth    : true,
+      headingsOffset  : -boardTop
+    });
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.10/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

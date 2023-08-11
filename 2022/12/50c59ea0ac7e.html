@@ -1,0 +1,845 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/crab.jpg">
+  <link rel="icon" href="/img/crab.jpg">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="Crab">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="1. typeoftypeof 是 Javascript 的一个操作符，可以表示未经计算的操作数的类型。 如下是摘录自 MDN 的 typeof 可能输出的值的列表：    类型 结果    Undefined &quot;undefined&quot;   Null &quot;object&quot;   Boolean &quot;boolean&quot;   Number &quot;n">
+<meta property="og:type" content="article">
+<meta property="og:title" content="简述Javascript的类型判断">
+<meta property="og:url" content="https://blog.zpangxie.top/2022/12/50c59ea0ac7e.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="1. typeoftypeof 是 Javascript 的一个操作符，可以表示未经计算的操作数的类型。 如下是摘录自 MDN 的 typeof 可能输出的值的列表：    类型 结果    Undefined &quot;undefined&quot;   Null &quot;object&quot;   Boolean &quot;boolean&quot;   Number &quot;n">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2022-12-23T15:40:14.000Z">
+<meta property="article:modified_time" content="2023-08-11T03:04:50.949Z">
+<meta property="article:author" content="Crab">
+<meta property="article:tag" content="JS">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+  
+  <title>简述Javascript的类型判断 - Hexo</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"blog.zpangxie.top","root":"/","version":"1.9.2","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.2.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Crab-Blog</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              &nbsp;<i class="iconfont icon-search"></i>&nbsp;
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="简述Javascript的类型判断"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2022-12-23 23:40" pubdate>
+          2022年12月23日 晚上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          6.5k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          55 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">简述Javascript的类型判断</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h1 id="1-typeof"><a href="#1-typeof" class="headerlink" title="1. typeof"></a>1. typeof</h1><p>typeof 是 Javascript 的一个操作符，可以表示未经计算的操作数的类型。</p>
+<p>如下是摘录自 MDN 的 <code>typeof</code> 可能输出的值的列表：</p>
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>结果</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><a target="_blank" rel="noopener" href="https://developer.mozilla.org/en-US/docs/Glossary/Undefined">Undefined</a></td>
+<td><code>&quot;undefined&quot;</code></td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://developer.mozilla.org/en-US/docs/Glossary/Null">Null</a></td>
+<td><code>&quot;object&quot;</code></td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://developer.mozilla.org/en-US/docs/Glossary/Boolean">Boolean</a></td>
+<td><code>&quot;boolean&quot;</code></td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://developer.mozilla.org/en-US/docs/Glossary/Number">Number</a></td>
+<td><code>&quot;number&quot;</code></td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://developer.mozilla.org/en-US/docs/Glossary/BigInt">BigInt</a></td>
+<td><code>&quot;bigint&quot;</code></td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://developer.mozilla.org/en-US/docs/Glossary/String">String</a></td>
+<td><code>&quot;string&quot;</code></td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://developer.mozilla.org/en-US/docs/Glossary/Symbol">Symbol</a> (ECMAScript 2015 新增)</td>
+<td><code>&quot;symbol&quot;</code></td>
+</tr>
+<tr>
+<td>宿主对象（由 JS 环境提供）</td>
+<td><em>取决于具体实现</em></td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://developer.mozilla.org/en-US/docs/Glossary/Function">Function</a> 对象 (按照 ECMA-262 规范实现 [[Call]])</td>
+<td><code>&quot;function&quot;</code></td>
+</tr>
+<tr>
+<td>其他任何对象</td>
+<td><code>&quot;object&quot;</code></td>
+</tr>
+</tbody></table>
+<p>使用 <code>typeof</code> 时要特别注意以下两个非预想的结果：</p>
+<ul>
+<li><code>typeof null</code> 输出为 “object”</li>
+<li><code>typeof NaN</code> 输出为 “number” (NaN：Not-A-Number)</li>
+</ul>
+<p>此外 MDN 附加了以下 <code>typeof</code> 的诡异特性，在此进行摘录：</p>
+<h3 id="null"><a href="#null" class="headerlink" title="null"></a><code>null</code></h3><figure class="highlight actionscript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs actionscript"><span class="hljs-comment">// JavaScript 诞生以来便如此</span><br><span class="hljs-keyword">typeof</span> <span class="hljs-literal">null</span> === <span class="hljs-string">&#x27;object&#x27;</span>;<br></code></pre></td></tr></table></figure>
+
+<p>在 JavaScript 最初的实现中，JavaScript 中的值是由一个表示类型的标签和实际数据值表示的。对象的类型标签是 0。由于 <code>null</code> 代表的是空指针（大多数平台下值为 0x00），因此，null 的类型标签是 0，<code>typeof null</code> 也因此返回 <code>&quot;object&quot;</code>。（<a target="_blank" rel="noopener" href="http://www.2ality.com/2013/10/typeof-null.html">参考来源</a>）</p>
+<p>曾有一个 ECMAScript 的修复提案（通过选择性加入的方式），但<a target="_blank" rel="noopener" href="http://wiki.ecmascript.org/doku.php?id=harmony:typeof_null">被拒绝了</a>。该提案会导致 <code>typeof null === &#39;null&#39;</code>。</p>
+<h3 id="使用-new-操作符"><a href="#使用-new-操作符" class="headerlink" title="使用 new 操作符"></a>使用 <code>new</code> 操作符</h3><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs js"><span class="hljs-comment">// 除 Function 外的所有构造函数的类型都是 &#x27;object&#x27;</span><br><span class="hljs-keyword">var</span> str = <span class="hljs-keyword">new</span> <span class="hljs-title class_">String</span>(<span class="hljs-string">&#x27;String&#x27;</span>);<br><span class="hljs-keyword">var</span> num = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Number</span>(<span class="hljs-number">100</span>);<br><br><span class="hljs-keyword">typeof</span> str; <span class="hljs-comment">// 返回 &#x27;object&#x27;</span><br><span class="hljs-keyword">typeof</span> num; <span class="hljs-comment">// 返回 &#x27;object&#x27;</span><br><br><span class="hljs-keyword">var</span> func = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Function</span>();<br><br><span class="hljs-keyword">typeof</span> func; <span class="hljs-comment">// 返回 &#x27;function&#x27;</span><br></code></pre></td></tr></table></figure>
+
+<h3 id="语法中的括号"><a href="#语法中的括号" class="headerlink" title="语法中的括号"></a>语法中的括号</h3><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs js"><span class="hljs-comment">// 括号有无将决定表达式的类型。</span><br><span class="hljs-keyword">var</span> iData = <span class="hljs-number">99</span>;<br><br><span class="hljs-keyword">typeof</span> iData + <span class="hljs-string">&#x27; Wisen&#x27;</span>; <span class="hljs-comment">// &#x27;number Wisen&#x27;</span><br><span class="hljs-keyword">typeof</span> (iData + <span class="hljs-string">&#x27; Wisen&#x27;</span>); <span class="hljs-comment">// &#x27;string&#x27;</span><br></code></pre></td></tr></table></figure>
+
+<h3 id="正则表达式"><a href="#正则表达式" class="headerlink" title="正则表达式"></a>正则表达式</h3><p>对正则表达式字面量的类型判断在某些浏览器中不符合标准：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs js"><span class="hljs-keyword">typeof</span> /s/ === <span class="hljs-string">&#x27;function&#x27;</span>; <span class="hljs-comment">// Chrome 1-12 , 不符合 ECMAScript 5.1</span><br><span class="hljs-keyword">typeof</span> /s/ === <span class="hljs-string">&#x27;object&#x27;</span>; <span class="hljs-comment">// Firefox 5+ , 符合 ECMAScript 5.1</span><br><br></code></pre></td></tr></table></figure>
+
+<h3 id="错误"><a href="#错误" class="headerlink" title="错误"></a>错误</h3><p>在 ECMAScript 2015 之前，<code>typeof</code> 总能保证对任何所给的操作数返回一个字符串。即便是没有声明的标识符，<code>typeof</code> 也能返回 <code>&#39;undefined&#39;</code>。使用 <code>typeof</code> 永远不会抛出错误。</p>
+<p>但在加入了块级作用域的 <a target="_blank" rel="noopener" href="https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Statements/let">let</a> 和 <a target="_blank" rel="noopener" href="https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Statements/const">const</a> 之后，在其被声明之前对块中的 <code>let</code> 和 <code>const</code> 变量使用 <code>typeof</code> 会抛出一个  <a target="_blank" rel="noopener" href="https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/ReferenceError">ReferenceError</a>。块作用域变量在块的头部处于“<a target="_blank" rel="noopener" href="https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Statements/let#Temporal_Dead_Zone_and_errors_with_let">暂存死区</a>”，直至其被初始化，在这期间，访问变量将会引发错误。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs js"><span class="hljs-keyword">typeof</span> undeclaredVariable === <span class="hljs-string">&#x27;undefined&#x27;</span>;<br><br><span class="hljs-keyword">typeof</span> newLetVariable; <span class="hljs-comment">// ReferenceError</span><br><span class="hljs-keyword">typeof</span> newConstVariable; <span class="hljs-comment">// ReferenceError</span><br><span class="hljs-keyword">typeof</span> newClass; <span class="hljs-comment">// ReferenceError</span><br><br><span class="hljs-keyword">let</span> newLetVariable;<br><span class="hljs-keyword">const</span> newConstVariable = <span class="hljs-string">&#x27;hello&#x27;</span>;<br><span class="hljs-keyword">class</span> <span class="hljs-title class_">newClass</span>&#123;&#125;;<br></code></pre></td></tr></table></figure>
+
+<h3 id="例外"><a href="#例外" class="headerlink" title="例外"></a>例外</h3><p>当前所有的浏览器都暴露了一个类型为 <code>undefined</code> 的非标准宿主对象 <a target="_blank" rel="noopener" href="https://developer.mozilla.org/zh-CN/docs/Web/API/Document/all" title="Document 接口上的一个只读属性。返回一个 HTMLAllCollection，包含了页面上的所有元素。"><code>document.all</code></a>。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs js"><span class="hljs-keyword">typeof</span> <span class="hljs-variable language_">document</span>.<span class="hljs-property">all</span> === <span class="hljs-string">&#x27;undefined&#x27;</span>;<br><br></code></pre></td></tr></table></figure>
+
+<p>尽管规范允许为非标准的外来对象自定义类型标签，但它要求这些类型标签与已有的不同。<code>document.all</code> 的类型标签为 <code>&#39;undefined&#39;</code> 的例子在 Web 领域中被归类为对原 ECMA JavaScript 标准的“故意侵犯”。</p>
+<h1 id="2-instanceof"><a href="#2-instanceof" class="headerlink" title="2. instanceof"></a>2. instanceof</h1><p>instanceof 运算符用于检测构造函数的 prototype 属性是否出现在某个实例对象的原型链上，换句话说，instanceof 可以帮助我们来判断一个对象是否是否继承与另一个对象。</p>
+<h3 id="内部原理"><a href="#内部原理" class="headerlink" title="内部原理"></a>内部原理</h3><p>其实这里可以看一下 <code>instanceof</code> 运算符代码：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs js"><span class="hljs-keyword">function</span> <span class="hljs-title function_">instance_of</span>(<span class="hljs-params">L, R</span>) &#123;<span class="hljs-comment">//L 表示左表达式，R 表示右表达式</span><br> <span class="hljs-keyword">var</span> O = R.<span class="hljs-property"><span class="hljs-keyword">prototype</span></span>;<span class="hljs-comment">// 取 R 的显示原型</span><br> L = L.<span class="hljs-property">__proto__</span>;<span class="hljs-comment">// 取 L 的隐式原型</span><br> <span class="hljs-keyword">while</span> (<span class="hljs-literal">true</span>) &#123; <br>   <span class="hljs-keyword">if</span> (L === <span class="hljs-literal">null</span>) <br>     <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>; <br>   <span class="hljs-keyword">if</span> (O === L)<span class="hljs-comment">// 这里重点：当 O 严格等于 L 时，返回 true </span><br>     <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>; <br>   L = L.<span class="hljs-property">__proto__</span>; <br> &#125; <br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>可以很容易发现，<code>instance_of</code> 方法取出了右边对象 R 的 <code>prototype</code> 属性，然后使用了 <code>while</code> 循环一层一层的去调出左边对象 L 的 <code>__proto__</code> 隐式原型，按照原型链的调用规则，如果 L 继承与 R ，那 L 在某一层的隐式原型一定与 R 的显示原型完全相等。</p>
+<p>举个例子：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs js"><span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-title class_">Number</span> <span class="hljs-keyword">instanceof</span> <span class="hljs-title class_">Number</span>);<span class="hljs-comment">//false </span><br><span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-title class_">String</span> <span class="hljs-keyword">instanceof</span> <span class="hljs-title class_">String</span>);<span class="hljs-comment">//false </span><br><span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-title class_">Function</span> <span class="hljs-keyword">instanceof</span> <span class="hljs-title class_">Object</span>);<span class="hljs-comment">//true </span><br><span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-title class_">Foo</span> <span class="hljs-keyword">instanceof</span> <span class="hljs-title class_">Foo</span>);<span class="hljs-comment">//false</span><br><br><span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-title class_">Foo</span> <span class="hljs-keyword">instanceof</span> <span class="hljs-title class_">Function</span>);<span class="hljs-comment">//true </span><br><br><span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-title class_">Object</span> <span class="hljs-keyword">instanceof</span> <span class="hljs-title class_">Object</span>);<span class="hljs-comment">//true </span><br><span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-title class_">Function</span> <span class="hljs-keyword">instanceof</span> <span class="hljs-title class_">Function</span>);<span class="hljs-comment">//true </span><br></code></pre></td></tr></table></figure>
+
+<p>上面第一组的解析我们很容易就能明白，因为一个对象本身的隐式原型与其显示原型不相等，那么肯定返回 <code>false</code>；第二组，Foo 函数构造于 <code>Function</code> 这是一个很标准的原型继承；而第三组似乎有些特殊，但是仔细看一下原型继承图我们就很容易看明白，对于 Object 来说 <code>Object.__proto__.proto__ === Object.prototype</code>，对于 Function 来说 <code>Function.__proto__ === Function.prototype</code>。</p>
+<p><a href="!http://markdown.img.esunr.xyz/20191109222853.png"></a></p>
+<h3 id="特殊情况"><a href="#特殊情况" class="headerlink" title="特殊情况"></a>特殊情况</h3><p>对于字面量而非对象的元素，不可以使用 instanceof 来判断类型，因为其本身并非是 Object，因此会出现如下的情况：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs js"><span class="hljs-keyword">let</span> num = <span class="hljs-number">123</span><br>num <span class="hljs-keyword">instanceof</span> <span class="hljs-title class_">Number</span> <span class="hljs-comment">// false</span><br><br><span class="hljs-keyword">let</span> str = <span class="hljs-string">&quot;string&quot;</span><br>str <span class="hljs-keyword">instanceof</span> <span class="hljs-title class_">String</span> <span class="hljs-comment">// false</span><br></code></pre></td></tr></table></figure>
+
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs js"><span class="hljs-keyword">let</span> num = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Number</span>(<span class="hljs-number">123</span>)<br><span class="hljs-keyword">typeof</span> num <span class="hljs-comment">// &#x27;object&#x27;</span><br>num <span class="hljs-keyword">instanceof</span> <span class="hljs-title class_">Number</span> <span class="hljs-comment">// true</span><br><br><span class="hljs-keyword">let</span> str = <span class="hljs-string">&quot;string&quot;</span><br><span class="hljs-keyword">typeof</span> str <span class="hljs-comment">// &#x27;object&#x27;</span><br>str <span class="hljs-keyword">instanceof</span> <span class="hljs-title class_">String</span> <span class="hljs-comment">// true</span><br></code></pre></td></tr></table></figure>
+
+<p>但有趣的一点是，我们直接对比变量的隐式原型，其指向的正是这些内置对象的显式原型：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs js"><span class="hljs-keyword">let</span> str = <span class="hljs-string">&quot;string&quot;</span><br>str.<span class="hljs-property">__proto__</span> === <span class="hljs-title class_">String</span>.<span class="hljs-property"><span class="hljs-keyword">prototype</span></span> <span class="hljs-comment">// true</span><br></code></pre></td></tr></table></figure>
+
+<p>按照 instance 的判断规则，可以判断出 <code>str instanceof String</code> 返回结果是 <code>true</code>，因此说明其底层对字面量元素进行了屏蔽，使其直接返回了 false 。因此对于字面量的 Number 或者 String，只能使用 typeof 来判断或者 <code>Object.prototype.toString()</code> 来判断。</p>
+<h1 id="3-Object-prototype-toString"><a href="#3-Object-prototype-toString" class="headerlink" title="3.Object.prototype.toString()"></a>3.Object.prototype.toString()</h1><h3 id="被改写的-toString"><a href="#被改写的-toString" class="headerlink" title="被改写的 toString()"></a>被改写的 toString()</h3><p>由于 Object 对象的原型上挂载了一个 <code>toString()</code> 方法，因此根据原型链的调用规则，在 Javascript 中每个对象都可以调用 <code>toString()</code> 方法，其本身原意为返回一个表示该对象的字符串。</p>
+<p>我们可以通过创建一个对象来调用该方法：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs js"><span class="hljs-keyword">let</span> obj = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Object</span>()<br><span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(obj.<span class="hljs-title function_">toString</span>()) <span class="hljs-comment">// &#x27;[object Object]&#x27;</span><br></code></pre></td></tr></table></figure>
+
+<p>但是当我们调用 Number 类型或者 Array 类型时，其结果为：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs js"><span class="hljs-keyword">let</span> num = <span class="hljs-number">123</span><br><span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(num.<span class="hljs-title function_">toString</span>()); <span class="hljs-comment">// &#x27;123&#x27;</span><br><span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>([<span class="hljs-number">1</span>,<span class="hljs-number">2</span>,<span class="hljs-number">3</span>].<span class="hljs-title function_">toString</span>()); <span class="hljs-comment">// &#x27;1,2,3&#x27;</span><br></code></pre></td></tr></table></figure>
+
+<p>这是由于在 <code>Number.prototype</code> 与 <code>Array.prototype</code> 上已经改写了 <code>toString()</code> 方法，<code>123.toString()</code> 执行的其实是 <code>Number.prototype.toString()</code> 而并非 <code>Object.prototype.toString()</code>。对于大部分的 Javascript 内建类型来说，都改写了 <code>toString()</code> 方法，用户自行创建的构造函数也可以通过在 <code>prototype</code> 上挂载 <code>toString()</code> 方法达到改写的目的。以下的表格列举了常见的类型对象调用 <code>toString()</code> 方法所输出的结果：</p>
+<table>
+<thead>
+<tr>
+<th>数据类型</th>
+<th>例子</th>
+<th>return</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>字符串</td>
+<td>“foo”.toString()</td>
+<td>“foo”</td>
+</tr>
+<tr>
+<td>数字</td>
+<td>1.toString()</td>
+<td>Uncaught SyntaxError: Invalid or unexpected token</td>
+</tr>
+<tr>
+<td>布尔值</td>
+<td>false.toString()</td>
+<td>“false”</td>
+</tr>
+<tr>
+<td>undefined</td>
+<td>undefined.toString()</td>
+<td>Uncaught TypeError: Cannot read property ‘toString’ of undefined</td>
+</tr>
+<tr>
+<td>null</td>
+<td>null.toString()</td>
+<td>Uncaught TypeError: Cannot read property ‘toString’ of null</td>
+</tr>
+<tr>
+<td>String</td>
+<td>String.toString()</td>
+<td>“function String() { [native code] }”</td>
+</tr>
+<tr>
+<td>Number</td>
+<td>Number.toString()</td>
+<td>“function Number() { [native code] }”</td>
+</tr>
+<tr>
+<td>Boolean</td>
+<td>Boolean.toString()</td>
+<td>“function Boolean() { [native code] }”</td>
+</tr>
+<tr>
+<td>Array</td>
+<td>Array.toString()</td>
+<td>“function Array() { [native code] }”</td>
+</tr>
+<tr>
+<td>Function</td>
+<td>Function.toString()</td>
+<td>“function Function() { [native code] }”</td>
+</tr>
+<tr>
+<td>Date</td>
+<td>Date.toString()</td>
+<td>“function Date() { [native code] }”</td>
+</tr>
+<tr>
+<td>RegExp</td>
+<td>RegExp.toString()</td>
+<td>“function RegExp() { [native code] }”</td>
+</tr>
+<tr>
+<td>Error</td>
+<td>Error.toString()</td>
+<td>“function Error() { [native code] }”</td>
+</tr>
+<tr>
+<td>Promise</td>
+<td>Promise.toString()</td>
+<td>“function Promise() { [native code] }”</td>
+</tr>
+<tr>
+<td>Obejct</td>
+<td>Object.toString()</td>
+<td>“function Object() { [native code] }”</td>
+</tr>
+<tr>
+<td>Math</td>
+<td>Math.toString()</td>
+<td>“[object Math]“</td>
+</tr>
+</tbody></table>
+<p>那如果我们想强制让某一对象调用 <code>Object.prototype.toString()</code> 方法会发生什么呢？我们使用 <code>call</code> 来改写方法中的 <code>this</code> 可以达到这一效果：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs js"><span class="hljs-keyword">let</span> num = <span class="hljs-number">123</span><br><span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-title class_">Object</span>.<span class="hljs-property"><span class="hljs-keyword">prototype</span></span>.<span class="hljs-property">toString</span>.<span class="hljs-title function_">call</span>(num)); <span class="hljs-comment">// &#x27;[Object Number]&#x27;</span><br></code></pre></td></tr></table></figure>
+
+<p>可以发现通过借助 <code>Object.prototype.toString()</code> 我们可以获取到调用对象的类型，这一点非常有用，可以帮助我们接下来进行类型判断。</p>
+<h3 id="内部原理-1"><a href="#内部原理-1" class="headerlink" title="内部原理"></a>内部原理</h3><p>在编写类型判断的方法之前，我们不妨来看一下 <code>Object.prototype.toString</code> 到底做了什么，在不同的 ES 版本中，该方法会有一定的区别：</p>
+<p>ES5 环境下：</p>
+<ul>
+<li>如果<strong>this</strong>的值为<strong>undefined</strong>,则返回<code>&quot;[object Undefined]&quot;</code>.</li>
+<li>如果<strong>this</strong>的值为<strong>null</strong>,则返回<code>&quot;[object Null]&quot;</code>.</li>
+<li>让<em>O</em>成为调用ToObject(<strong>this</strong>)的结果.</li>
+<li>让<em>class</em>成为<em>O</em>的内部属性[[Class]]的值.</li>
+<li>返回三个字符串**”[object “,** <em>class</em>, 以及 **”]“**连接后的新字符串.</li>
+</ul>
+<p>ES6 环境下：</p>
+<ul>
+<li>如果<strong>this</strong>的值为<strong>undefined</strong>,则返回<code>&quot;[object Undefined]&quot;</code>.</li>
+<li>如果<strong>this</strong>的值为<strong>null</strong>,则返回<code>&quot;[object Null]&quot;</code>.</li>
+<li>让<em>O</em>成为调用ToObject(<strong>this</strong>)的结果.</li>
+<li>如果<em>O</em>有[[NativeBrand]]内部属性,让<em>tag</em>成为表29中对应的值.</li>
+<li>否则<ol>
+<li>让<em>hasTag</em>成为调用<em>O</em>的[[HasProperty]]内部方法后的结果,参数为@@toStringTag.</li>
+<li>如果<em>hasTag</em>为<strong>false</strong>,则让<em>tag</em>为<code>&quot;Object&quot;</code>.</li>
+<li>否则,<ol>
+<li>让<em>tag</em>成为调用<em>O</em>的[[Get]]内部方法后的结果,参数为@@toStringTag.</li>
+<li>如果<em>tag</em>是一个abrupt completion,则让<em>tag</em>成为NormalCompletion(<code>&quot;???&quot;</code>).</li>
+<li>让<em>tag</em>成为<em>tag</em>.[[value]].</li>
+<li>如果Type(<em>tag</em>)不是字符串,则让<em>tag成为</em><code>&quot;???&quot;</code>.</li>
+<li>如果<em>tag</em>的值为<code>&quot;Arguments&quot;</code>, <code>&quot;Array&quot;</code>, <code>&quot;Boolean&quot;</code>, <code>&quot;Date&quot;</code>, <code>&quot;Error&quot;</code>, <code>&quot;Function&quot;</code>, <code>&quot;JSON&quot;</code>, <code>&quot;Math&quot;</code>, <code>&quot;Number&quot;</code>, <code>&quot;Object&quot;</code>, <code>&quot;RegExp&quot;</code>,<code>或者&quot;String&quot;中的任一个,则让</code><em>tag</em>成为字符串<code>&quot;~&quot;和</code><em>tag</em>当前的值连接后的结果.</li>
+</ol>
+</li>
+</ol>
+</li>
+<li>返回三个字符串”[object “, tag, and “]“连接后的新字符串.</li>
+</ul>
+<h3 id="封装一个类型判断的方法"><a href="#封装一个类型判断的方法" class="headerlink" title="封装一个类型判断的方法"></a>封装一个类型判断的方法</h3><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs js"><span class="hljs-keyword">function</span> <span class="hljs-title function_">type</span> (data)&#123;<br>  <span class="hljs-keyword">if</span>(<span class="hljs-variable language_">arguments</span>.<span class="hljs-property">length</span> === <span class="hljs-number">0</span>) <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Error</span>(<span class="hljs-string">&#x27;type方法未传参&#x27;</span>);<br>  <span class="hljs-keyword">var</span> typeStr = <span class="hljs-title class_">Object</span>.<span class="hljs-property"><span class="hljs-keyword">prototype</span></span>.<span class="hljs-property">toString</span>.<span class="hljs-title function_">call</span>(data);<br>  <span class="hljs-keyword">return</span> typeStr.<span class="hljs-title function_">match</span>(<span class="hljs-regexp">/\[object (.*?)\]/</span>)[<span class="hljs-number">1</span>].<span class="hljs-title function_">toLowerCase</span>();<br>&#125;<br></code></pre></td></tr></table></figure>
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/%E5%89%8D%E7%AB%AF/" class="category-chain-item">前端</a>
+  
+  
+    <span>></span>
+    
+  <a href="/categories/%E5%89%8D%E7%AB%AF/JavaScript/" class="category-chain-item">JavaScript</a>
+  
+  
+
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/JS/">#JS</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>简述Javascript的类型判断</div>
+      <div>https://blog.zpangxie.top/2022/12/50c59ea0ac7e.html</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>Crab</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2022年12月23日</div>
+        </div>
+      
+      
+      <div class="license-meta-item">
+        <div>许可协议</div>
+        <div>
+          
+            
+            
+              <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+              <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                <i class="iconfont icon-by"></i>
+              </span>
+              </a>
+            
+          
+        </div>
+      </div>
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2023/01/496595df3131.html" title="Docker 常用指令整理">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">Docker 常用指令整理</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2022/12/f7b88c5a43cb.html" title="JavaScript浅拷贝与深拷贝">
+                        <span class="hidden-mobile">JavaScript浅拷贝与深拷贝</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+      <a href="https://zpangxie.github.io/" target="_blank" rel="nofollow noopener"><span>Crab</span></a>
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      headingSelector : CONFIG.toc.headingSelector || 'h1,h2,h3,h4,h5,h6',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      collapseDepth   : CONFIG.toc.collapseDepth || 0,
+      scrollSmooth    : true,
+      headingsOffset  : -boardTop
+    });
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.10/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

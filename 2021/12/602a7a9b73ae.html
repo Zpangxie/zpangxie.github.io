@@ -1,0 +1,685 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/crab.jpg">
+  <link rel="icon" href="/img/crab.jpg">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="Crab">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="前言在日常开发中我们经常会遇到这样的需求：在本地开发项目同步到Github上，同时将服务器上的代码也做更新。倘若能把 本地-Github-服务器 这三个平台关联（如图），这样就能极大的提高我们的效率。  那么大体上的思路就只分两步了：  将本地项目托管到Github 将Github上的代码同步到远程服务器端  本地项目托管到Github先假设我们再本地的D盘目录下创建了一个test文件夹，里面放着">
+<meta property="og:type" content="article">
+<meta property="og:title" content="将本地项目托管到Github上，以及将Github上的项目同步到本地">
+<meta property="og:url" content="https://blog.zpangxie.top/2021/12/602a7a9b73ae.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="前言在日常开发中我们经常会遇到这样的需求：在本地开发项目同步到Github上，同时将服务器上的代码也做更新。倘若能把 本地-Github-服务器 这三个平台关联（如图），这样就能极大的提高我们的效率。  那么大体上的思路就只分两步了：  将本地项目托管到Github 将Github上的代码同步到远程服务器端  本地项目托管到Github先假设我们再本地的D盘目录下创建了一个test文件夹，里面放着">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://s2.loli.net/2023/04/22/wOzFbcxL1WoHvga.png">
+<meta property="og:image" content="https://s2.loli.net/2023/04/22/jHBbVcumG45eCtR.png">
+<meta property="og:image" content="https://s2.loli.net/2023/04/22/ADPX1pEoZJ43yCM.png">
+<meta property="og:image" content="https://s2.loli.net/2023/04/22/dy1zqZ3FUHxn857.png">
+<meta property="og:image" content="https://s2.loli.net/2023/04/22/VCdth546ielnUqx.png">
+<meta property="article:published_time" content="2021-12-21T13:50:06.000Z">
+<meta property="article:modified_time" content="2023-08-11T03:04:50.945Z">
+<meta property="article:author" content="Crab">
+<meta property="article:tag" content="Github">
+<meta property="article:tag" content="Git">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://s2.loli.net/2023/04/22/wOzFbcxL1WoHvga.png">
+  
+  
+  
+  <title>将本地项目托管到Github上，以及将Github上的项目同步到本地 - Hexo</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"blog.zpangxie.top","root":"/","version":"1.9.2","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.2.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Crab-Blog</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              &nbsp;<i class="iconfont icon-search"></i>&nbsp;
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="将本地项目托管到Github上，以及将Github上的项目同步到本地"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2021-12-21 21:50" pubdate>
+          2021年12月21日 晚上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          2.1k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          18 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">将本地项目托管到Github上，以及将Github上的项目同步到本地</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>在日常开发中我们经常会遇到这样的需求：在本地开发项目同步到Github上，同时将服务器上的代码也做更新。倘若能把 <code>本地-Github-服务器</code> 这三个平台关联（如图），这样就能极大的提高我们的效率。</p>
+<p><img src="https://s2.loli.net/2023/04/22/wOzFbcxL1WoHvga.png" srcset="/img/loading.gif" lazyload></p>
+<p>那么大体上的思路就只分两步了：</p>
+<ol>
+<li>将本地项目托管到Github</li>
+<li>将Github上的代码同步到远程服务器端</li>
+</ol>
+<h1 id="本地项目托管到Github"><a href="#本地项目托管到Github" class="headerlink" title="本地项目托管到Github"></a>本地项目托管到Github</h1><p>先假设我们再本地的D盘目录下创建了一个<code>test</code>文件夹，里面放着我们的项目代码，接下来我们需要进行如下操作将其托管到Github。</p>
+<h3 id="1-本地下载安装Git环境"><a href="#1-本地下载安装Git环境" class="headerlink" title="1. 本地下载安装Git环境"></a>1. 本地下载安装Git环境</h3><p>这一步不多做赘述，去Git官网下载Git的安装包就可以了，安装完成后打开<code>Git Bash</code>应用，输入指令：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_">$ </span><span class="language-bash">ssh-keygen -t rsa -C <span class="hljs-string">&quot;yourEmail&quot;</span></span><br><span class="hljs-meta prompt_">$ </span><span class="language-bash">Generating public/private rsa key pair.</span><br><span class="hljs-meta prompt_">$ </span><span class="language-bash">Enter file <span class="hljs-keyword">in</span> <span class="hljs-built_in">which</span> to save the key (/c/Users/zpangxie/.ssh/id_rsa):</span> <br><span class="hljs-meta prompt_">$ </span><span class="language-bash">Created directory <span class="hljs-string">&#x27;/c/Users/zpangxie/.ssh&#x27;</span>.</span><br><span class="hljs-meta prompt_">$ </span><span class="language-bash">Enter passphrase (empty <span class="hljs-keyword">for</span> no passphrase):</span><br><span class="hljs-meta prompt_">$ </span><span class="language-bash">Enter same passphrase again:</span><br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_">$ </span><span class="language-bash">git config --global user.name <span class="hljs-string">&quot;yourName&quot;</span></span><br><span class="hljs-meta prompt_">$ </span><span class="language-bash">git config --global user.email <span class="hljs-string">&quot;yourEmal&quot;</span></span><br></code></pre></td></tr></table></figure>
+<p><code>yourName</code>和<code>yourEmal</code>分别对应你的Github用户名和邮箱</p>
+<h3 id="2-添加开发机的SSH-Key"><a href="#2-添加开发机的SSH-Key" class="headerlink" title="2. 添加开发机的SSH Key"></a>2. 添加开发机的SSH Key</h3><p><code>SSH Key</code>即SSH公钥，只有我们把某台PC的SSH公钥添加到Github的设置中，我们的这台PC才能跟我们上传的项目进行同步和更改。</p>
+<p>首先我们打开Git Bash，在命令中输入</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_">$ </span><span class="language-bash"><span class="hljs-built_in">cd</span> ~/.ssh</span><br><span class="hljs-meta prompt_">$ </span><span class="language-bash"><span class="hljs-built_in">ls</span></span><br></code></pre></td></tr></table></figure>
+<p>如果列出如下目录：</p>
+<figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs nginx"><span class="hljs-attribute">id_rsa</span>  id_rsa.pub  known_hosts<br></code></pre></td></tr></table></figure>
+<p>说明已存在SSH Key无需再生成，如果不存在则运行</p>
+<figure class="highlight crystal"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs crystal"><span class="hljs-variable">$ </span>ssh-keygen<br></code></pre></td></tr></table></figure>
+<p>生成<code>id_rsa.pub</code>文件后，我们使用命令查看密钥</p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs powershell"><span class="hljs-variable">$</span> <span class="hljs-built_in">cat</span> id_rsa.pub<br></code></pre></td></tr></table></figure>
+
+<p>得到的密钥大概长这样</p>
+<p><img src="https://s2.loli.net/2023/04/22/jHBbVcumG45eCtR.png" srcset="/img/loading.gif" lazyload></p>
+<p>我们将<code>id_ras.pub</code>文件中的所有文本都复制下来，打开Github，选择右上角头像-Settings-SSH and GPG keys，点击选项面板中的<code>New SSH Key</code>。</p>
+<p><img src="https://s2.loli.net/2023/04/22/ADPX1pEoZJ43yCM.png" srcset="/img/loading.gif" lazyload></p>
+<p>将自己的SSH Key添加到选项中即可，之后我们可以运行测试是否连接到Github</p>
+<figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs nginx"><span class="hljs-attribute">ssh</span> -T git<span class="hljs-variable">@github</span>.com<br></code></pre></td></tr></table></figure>
+
+<p>如果出现如下提示，则说名连接成功</p>
+<figure class="highlight ada"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs ada">Hi Zpangxie! You<span class="hljs-symbol">&#x27;ve</span> successfully authenticated, but GitHub does <span class="hljs-keyword">not</span> provide shell <span class="hljs-keyword">access</span>.<br></code></pre></td></tr></table></figure>
+
+<h3 id="3-在Github中创建空项目"><a href="#3-在Github中创建空项目" class="headerlink" title="3. 在Github中创建空项目"></a>3. 在Github中创建空项目</h3><p>我们点击右上角的“+”选择<code>New repository</code>创建一个新项目，要注意一点的是：</p>
+<blockquote>
+<p>新项目中除了题目和描述之外，不要点击任何选项，我们要的是一个完全空的项目仓库</p>
+</blockquote>
+<p><img src="https://s2.loli.net/2023/04/22/dy1zqZ3FUHxn857.png" srcset="/img/loading.gif" lazyload></p>
+<h3 id="4-上传本地项目代码到Github"><a href="#4-上传本地项目代码到Github" class="headerlink" title="4. 上传本地项目代码到Github"></a>4. 上传本地项目代码到Github</h3><p>我们点击<code>Create repository</code>之后，会出现一个提示，如下做讲解</p>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs awk"><span class="hljs-regexp">//</span> 这一步是跳转到本地的项目目录，我们可以替换为cd指令跳转，cd C:/test<br>echo <span class="hljs-string">&quot;# test&quot;</span> &gt;&gt; README.md<br><span class="hljs-regexp">//</span> 初始化项目<br>git init<br><span class="hljs-regexp">//</span> 添加一个README.md文件（选择性）<br>git add README.md<br><span class="hljs-regexp">//</span> 托管更改<br>git add . <br><span class="hljs-regexp">//</span> 提交一次初始化更改<br>git commit -m <span class="hljs-string">&quot;first commit&quot;</span><br><span class="hljs-regexp">//</span> 将本地与Github做远程连接<br>git remote add origin git@github.com:Zpangxie/test.git<br><span class="hljs-regexp">//</span> 提交代码到主分支<br>git push -u origin master<br></code></pre></td></tr></table></figure>
+
+<p>之后再刷新Github页面就发现代码提交完成了。</p>
+<h1 id="Github代码同步到服务器"><a href="#Github代码同步到服务器" class="headerlink" title="Github代码同步到服务器"></a>Github代码同步到服务器</h1><blockquote>
+<p>PS: 将代码下载到本地同理</p>
+</blockquote>
+<h3 id="1-服务器下载安装Git环境"><a href="#1-服务器下载安装Git环境" class="headerlink" title="1. 服务器下载安装Git环境"></a>1. 服务器下载安装Git环境</h3><p>与上文相同，只不过是服务器端就不需要用Git Bash了</p>
+<h3 id="2-添加开发机的SSH-Key-1"><a href="#2-添加开发机的SSH-Key-1" class="headerlink" title="2. 添加开发机的SSH Key"></a>2. 添加开发机的SSH Key</h3><p>与上文相同</p>
+<h3 id="4-同步项目代码到服务器（本地）"><a href="#4-同步项目代码到服务器（本地）" class="headerlink" title="4. 同步项目代码到服务器（本地）"></a>4. 同步项目代码到服务器（本地）</h3><p>首先在服务器或本地创建一个文件夹，作为项目的存放仓库，利用cd指令跳转到该文件夹下，如：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_">$ </span><span class="language-bash"><span class="hljs-built_in">cd</span> /var/www/html</span><br><span class="hljs-meta prompt_">$ </span><span class="language-bash"><span class="hljs-built_in">mkdir</span> <span class="hljs-built_in">test</span></span><br><span class="hljs-meta prompt_">$ </span><span class="language-bash"><span class="hljs-built_in">cd</span> <span class="hljs-built_in">test</span></span><br></code></pre></td></tr></table></figure>
+
+<p>初始化该目录为Git仓库</p>
+<figure class="highlight crystal"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs crystal"><span class="hljs-variable">$ </span>git init<br></code></pre></td></tr></table></figure>
+
+<p>我们在Github中打开我们的项目，之后选择<code>Clone or download</code>，复制我们项目的SSH地址</p>
+<p><img src="https://s2.loli.net/2023/04/22/VCdth546ielnUqx.png" srcset="/img/loading.gif" lazyload></p>
+<p>将仓库远程源连接到Github上的该项目</p>
+<figure class="highlight crystal"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs crystal"><span class="hljs-variable">$ </span>git remote add origin git<span class="hljs-variable">@github</span>.<span class="hljs-symbol">com:</span>Zpangxie/test.git<br></code></pre></td></tr></table></figure>
+
+<blockquote>
+<p>PS: 如过手滑信息填写错误，使用清除指令 <code>$ git remote remove origin</code> 清除源</p>
+</blockquote>
+<p>使用<code>Pull</code>指令，从远程源的主分支更新代码到服务器（本地）</p>
+<figure class="highlight crmsh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs crmsh">$ git pull origin <span class="hljs-literal">master</span><br></code></pre></td></tr></table></figure>
+
+<p>完成。</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/Git/" class="category-chain-item">Git</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/Github/">#Github</a>
+      
+        <a href="/tags/Git/">#Git</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>将本地项目托管到Github上，以及将Github上的项目同步到本地</div>
+      <div>https://blog.zpangxie.top/2021/12/602a7a9b73ae.html</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>Crab</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2021年12月21日</div>
+        </div>
+      
+      
+      <div class="license-meta-item">
+        <div>许可协议</div>
+        <div>
+          
+            
+            
+              <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+              <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                <i class="iconfont icon-by"></i>
+              </span>
+              </a>
+            
+          
+        </div>
+      </div>
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2021/12/4c279e95a858.html" title="探讨 Symbol-iterator 迭代器">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">探讨 Symbol-iterator 迭代器</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2021/12/690e0b6cfbcb.html" title="Vue递归组件——树形组件的实现参考">
+                        <span class="hidden-mobile">Vue递归组件——树形组件的实现参考</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+      <a href="https://zpangxie.github.io/" target="_blank" rel="nofollow noopener"><span>Crab</span></a>
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      headingSelector : CONFIG.toc.headingSelector || 'h1,h2,h3,h4,h5,h6',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      collapseDepth   : CONFIG.toc.collapseDepth || 0,
+      scrollSmooth    : true,
+      headingsOffset  : -boardTop
+    });
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.10/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

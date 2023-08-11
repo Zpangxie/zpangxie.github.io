@@ -1,0 +1,616 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/crab.jpg">
+  <link rel="icon" href="/img/crab.jpg">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="Crab">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="123456789101112131415161718192021222324import &amp;#123; componentFactory, $internalHooks &amp;#125; from &amp;#x27;.&#x2F;component&amp;#x27;;&#x2F;&#x2F; createDecorator 用于创建自定义的装饰器export &amp;#123; createDecorator, mixins &amp;#125; fro">
+<meta property="og:type" content="article">
+<meta property="og:title" content="vue-class-component 源码解析">
+<meta property="og:url" content="https://blog.zpangxie.top/2023/08/a360ef5f1032.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="123456789101112131415161718192021222324import &amp;#123; componentFactory, $internalHooks &amp;#125; from &amp;#x27;.&#x2F;component&amp;#x27;;&#x2F;&#x2F; createDecorator 用于创建自定义的装饰器export &amp;#123; createDecorator, mixins &amp;#125; fro">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-08-11T03:04:50.949Z">
+<meta property="article:modified_time" content="2023-08-11T03:04:50.949Z">
+<meta property="article:author" content="Crab">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+  
+  <title>vue-class-component 源码解析 - Hexo</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"blog.zpangxie.top","root":"/","version":"1.9.2","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.2.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Crab-Blog</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              &nbsp;<i class="iconfont icon-search"></i>&nbsp;
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="vue-class-component 源码解析"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2023-08-11 11:04" pubdate>
+          2023年8月11日 上午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          10k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          84 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">vue-class-component 源码解析</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">import</span> &#123; componentFactory, $internalHooks &#125; <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;./component&#x27;</span>;<br><span class="hljs-comment">// createDecorator 用于创建自定义的装饰器</span><br><span class="hljs-keyword">export</span> &#123; createDecorator, mixins &#125; <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;./util&#x27;</span>;<br><span class="hljs-keyword">function</span> <span class="hljs-title function_">Component</span>(<span class="hljs-params">options</span>) &#123;<br>  	<span class="hljs-comment">// typeof Class === &#x27;function&#x27;  true</span><br>    <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> options === <span class="hljs-string">&#x27;function&#x27;</span>) &#123;<br>      	<span class="hljs-comment">// 如果options是一个累的情况</span><br>      	<span class="hljs-comment">// 则是 @Component 直接走工厂函数</span><br>        <span class="hljs-keyword">return</span> <span class="hljs-title function_">componentFactory</span>(options);<br>    &#125;<br>  	<span class="hljs-comment">// 如果是Component(&#123;</span><br>	  <span class="hljs-comment">//	// 所有的组件选项都可以放在这里</span><br>  	<span class="hljs-comment">//  template: `&lt;div&gt;&lt;/div&gt;`</span><br>		<span class="hljs-comment">// &#125;)</span><br>  	<span class="hljs-comment">// 这种结构 则闭包配置参数 此时的配置参数就是options 接收到的类是Component</span><br>    <span class="hljs-keyword">return</span> <span class="hljs-keyword">function</span> (<span class="hljs-params">Component</span>) &#123;<br>        <span class="hljs-keyword">return</span> <span class="hljs-title function_">componentFactory</span>(<span class="hljs-title class_">Component</span>, options);<br>    &#125;;<br>&#125;<br><span class="hljs-comment">// registerHooks 用于注册别的第三方的hooks 例如 vue-router的hooks</span><br><span class="hljs-title class_">Component</span>.<span class="hljs-property">registerHooks</span> = <span class="hljs-keyword">function</span> <span class="hljs-title function_">registerHooks</span>(<span class="hljs-params">keys</span>) &#123;<br>    $internalHooks.<span class="hljs-title function_">push</span>(...keys);<br>&#125;;<br><span class="hljs-keyword">export</span> <span class="hljs-keyword">default</span> <span class="hljs-title class_">Component</span>;<br></code></pre></td></tr></table></figure>
+
+<p>再次继续分析 <code>componentFactory</code>包的作用</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br></pre></td><td class="code"><pre><code class="hljs js"><span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> $internalHooks = [<br>  <span class="hljs-string">&#x27;data&#x27;</span>,<br>  <span class="hljs-string">&#x27;beforeCreate&#x27;</span>,<br>  <span class="hljs-string">&#x27;created&#x27;</span>,<br>  <span class="hljs-string">&#x27;beforeMount&#x27;</span>,<br>  <span class="hljs-string">&#x27;mounted&#x27;</span>,<br>  <span class="hljs-string">&#x27;beforeDestroy&#x27;</span>,<br>  <span class="hljs-string">&#x27;destroyed&#x27;</span>,<br>  <span class="hljs-string">&#x27;beforeUpdate&#x27;</span>,<br>  <span class="hljs-string">&#x27;updated&#x27;</span>,<br>  <span class="hljs-string">&#x27;activated&#x27;</span>,<br>  <span class="hljs-string">&#x27;deactivated&#x27;</span>,<br>  <span class="hljs-string">&#x27;render&#x27;</span>,<br>  <span class="hljs-string">&#x27;errorCaptured&#x27;</span>,<br>  <span class="hljs-string">&#x27;serverPrefetch&#x27;</span>, <span class="hljs-comment">// 2.6</span><br>]<br><br><span class="hljs-comment">// componentFactory函数的作用就是将我们class 声明的类中的属性转换成options的形式</span><br><span class="hljs-comment">//options 就是我们平时写的export default &#123;&#125;  的对象</span><br><span class="hljs-keyword">export</span> <span class="hljs-keyword">function</span> <span class="hljs-title function_">componentFactory</span>(<span class="hljs-params">Component, options = &#123;&#125;</span>) &#123;<br>  <span class="hljs-comment">// vue 组件的名字</span><br>  options.<span class="hljs-property">name</span> = options.<span class="hljs-property">name</span> || <span class="hljs-title class_">Component</span>.<span class="hljs-property">_componentTag</span> || <span class="hljs-title class_">Component</span>.<span class="hljs-property">name</span><br>  <span class="hljs-comment">// 获取类的实例属性</span><br>  <span class="hljs-comment">// prototype props.</span><br>  <span class="hljs-keyword">const</span> proto = <span class="hljs-title class_">Component</span>.<span class="hljs-property"><span class="hljs-keyword">prototype</span></span><br>  <span class="hljs-comment">// 获取原型上的所有的可以枚举或者不可枚举的所有属性值 进行遍历</span><br>  <span class="hljs-title class_">Object</span>.<span class="hljs-title function_">getOwnPropertyNames</span>(proto).<span class="hljs-title function_">forEach</span>(<span class="hljs-keyword">function</span> (<span class="hljs-params">key</span>) &#123;<br>    <span class="hljs-keyword">if</span> (key === <span class="hljs-string">&#x27;constructor&#x27;</span>) &#123;<br>      <span class="hljs-keyword">return</span><br>    &#125;<br>    <span class="hljs-comment">// 如果存在hooks选择 例如options中的beforeRouteEnter 这种hook 就会被添加到 options中</span><br>    <span class="hljs-keyword">if</span> ($internalHooks.<span class="hljs-title function_">indexOf</span>(key) &gt; -<span class="hljs-number">1</span>) &#123;<br>      options[key] = proto[key]<br>      <span class="hljs-keyword">return</span><br>    &#125;<br>    <span class="hljs-comment">// getOwnPropertyDescriptor 获取该对象上的属性的操作符 而不获取原形链上的操作符</span><br>    <span class="hljs-comment">// 因此可能获取到的key为 undefined</span><br>    <span class="hljs-keyword">const</span> descriptor = <span class="hljs-title class_">Object</span>.<span class="hljs-title function_">getOwnPropertyDescriptor</span>(proto, key)<br>    <span class="hljs-comment">// void 0 === undefined // true</span><br>    <span class="hljs-keyword">if</span> (descriptor.<span class="hljs-property">value</span> !== <span class="hljs-keyword">void</span> <span class="hljs-number">0</span>) &#123;<br>      <span class="hljs-comment">// methods</span><br>      <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> descriptor.<span class="hljs-property">value</span> === <span class="hljs-string">&#x27;function&#x27;</span>) &#123;<br>        ;(options.<span class="hljs-property">methods</span> || (options.<span class="hljs-property">methods</span> = &#123;&#125;))[key] = descriptor.<span class="hljs-property">value</span><br>      &#125; <span class="hljs-keyword">else</span> &#123;<br>        <span class="hljs-comment">// 因为ts用的class 继承的关系 这里获取到的属性都是实力对象身上的属性 也就是</span><br>        <span class="hljs-comment">// options中的data的返回值的属性</span><br>        <span class="hljs-comment">// typescript decorated data</span><br>        ;(options.<span class="hljs-property">mixins</span> || (options.<span class="hljs-property">mixins</span> = [])).<span class="hljs-title function_">push</span>(&#123;<br>          <span class="hljs-title function_">data</span>(<span class="hljs-params"></span>) &#123;<br>            <span class="hljs-keyword">return</span> &#123; [key]: descriptor.<span class="hljs-property">value</span> &#125;<br>          &#125;,<br>        &#125;)<br>      &#125;<br>    &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (descriptor.<span class="hljs-property">get</span> || descriptor.<span class="hljs-property">set</span>) &#123;<br>      <span class="hljs-comment">// 当前的属性如果实现了 get 或者 set方法 则是一个计算属性</span><br>      <span class="hljs-comment">// computed properties</span><br>      ;(options.<span class="hljs-property">computed</span> || (options.<span class="hljs-property">computed</span> = &#123;&#125;))[key] = &#123;<br>        <span class="hljs-attr">get</span>: descriptor.<span class="hljs-property">get</span>,<br>        <span class="hljs-attr">set</span>: descriptor.<span class="hljs-property">set</span>,<br>      &#125;<br>    &#125;<br>  &#125;)<br>  ;(options.<span class="hljs-property">mixins</span> || (options.<span class="hljs-property">mixins</span> = [])).<span class="hljs-title function_">push</span>(&#123;<br>    <span class="hljs-title function_">data</span>(<span class="hljs-params"></span>) &#123;<br>      <span class="hljs-comment">// collectDataFromConstructor的作用就是区别我们定义的data 和</span><br>      <span class="hljs-comment">// （方法 属性以及vue的自有属性）的区别</span><br>      <span class="hljs-comment">// 将data从类中提取出来</span><br>      <span class="hljs-keyword">return</span> <span class="hljs-title function_">collectDataFromConstructor</span>(<span class="hljs-variable language_">this</span>, <span class="hljs-title class_">Component</span>)<br>    &#125;,<br>  &#125;)<br>  <span class="hljs-comment">// decorate options</span><br>  <span class="hljs-comment">// 这里用于创建自定义的装饰器</span><br>  <span class="hljs-keyword">const</span> decorators = <span class="hljs-title class_">Component</span>.<span class="hljs-property">__decorators__</span><br>  <span class="hljs-keyword">if</span> (decorators) &#123;<br>    decorators.<span class="hljs-title function_">forEach</span>(<span class="hljs-function">(<span class="hljs-params">fn</span>) =&gt;</span> <span class="hljs-title function_">fn</span>(options))<br>    <span class="hljs-keyword">delete</span> <span class="hljs-title class_">Component</span>.<span class="hljs-property">__decorators__</span><br>  &#125;<br>  <span class="hljs-comment">// find super</span><br>	<span class="hljs-comment">// Component.prototype.__proto__ === (所继承的直父类).prototype</span><br>  <span class="hljs-keyword">const</span> superProto = <span class="hljs-title class_">Object</span>.<span class="hljs-title function_">getPrototypeOf</span>(<span class="hljs-title class_">Component</span>.<span class="hljs-property"><span class="hljs-keyword">prototype</span></span>)<br>  <span class="hljs-keyword">const</span> <span class="hljs-title class_">Super</span> = superProto <span class="hljs-keyword">instanceof</span> <span class="hljs-title class_">Vue</span> ? superProto.<span class="hljs-property">constructor</span> : <span class="hljs-title class_">Vue</span><br>  <span class="hljs-comment">// 创建一个vue的子类</span><br>  <span class="hljs-keyword">const</span> <span class="hljs-title class_">Extended</span> = <span class="hljs-title class_">Super</span>.<span class="hljs-title function_">extend</span>(options)<br>  <span class="hljs-comment">// forwardStaticMembers如下</span><br>  <span class="hljs-title function_">forwardStaticMembers</span>(<span class="hljs-title class_">Extended</span>, <span class="hljs-title class_">Component</span>, <span class="hljs-title class_">Super</span>)<br>  <span class="hljs-comment">// 如果支持反射 则将组件反射收集的值也映射到 vue的实例对象上</span><br>  <span class="hljs-keyword">if</span> (<span class="hljs-title function_">reflectionIsSupported</span>()) &#123;<br>    <span class="hljs-title function_">copyReflectionMetadata</span>(<span class="hljs-title class_">Extended</span>, <span class="hljs-title class_">Component</span>)<br>  &#125;<br>  <span class="hljs-keyword">return</span> <span class="hljs-title class_">Extended</span><br>&#125;<br><span class="hljs-keyword">const</span> reservedPropertyNames = [<br>    <span class="hljs-comment">// Unique id</span><br>    <span class="hljs-string">&#x27;cid&#x27;</span>,<br>    <span class="hljs-comment">// Super Vue constructor</span><br>    <span class="hljs-string">&#x27;super&#x27;</span>,<br>    <span class="hljs-comment">// Component options that will be used by the component</span><br>    <span class="hljs-string">&#x27;options&#x27;</span>,<br>    <span class="hljs-string">&#x27;superOptions&#x27;</span>,<br>    <span class="hljs-string">&#x27;extendOptions&#x27;</span>,<br>    <span class="hljs-string">&#x27;sealedOptions&#x27;</span>,<br>    <span class="hljs-comment">// Private assets</span><br>    <span class="hljs-string">&#x27;component&#x27;</span>,<br>    <span class="hljs-string">&#x27;directive&#x27;</span>,<br>    <span class="hljs-string">&#x27;filter&#x27;</span><br>];<br><span class="hljs-keyword">const</span> shouldIgnore = &#123;<br>    <span class="hljs-attr">prototype</span>: <span class="hljs-literal">true</span>,<br>    <span class="hljs-attr">arguments</span>: <span class="hljs-literal">true</span>,<br>    <span class="hljs-attr">callee</span>: <span class="hljs-literal">true</span>,<br>    <span class="hljs-attr">caller</span>: <span class="hljs-literal">true</span><br>&#125;;<br><span class="hljs-comment">//这个方法的作用是将Component的静态类型转发到vue创建子类的身上</span><br><span class="hljs-keyword">function</span> <span class="hljs-title function_">forwardStaticMembers</span>(<span class="hljs-params">Extended, Original, Super</span>) &#123;<br>    <span class="hljs-comment">// We have to use getOwnPropertyNames since Babel registers methods as non-enumerable</span><br>		<span class="hljs-comment">// 遍历原Component的每一个静态实例</span><br>    <span class="hljs-title class_">Object</span>.<span class="hljs-title function_">getOwnPropertyNames</span>(<span class="hljs-title class_">Original</span>).<span class="hljs-title function_">forEach</span>(<span class="hljs-function"><span class="hljs-params">key</span> =&gt;</span> &#123;<br>        <span class="hljs-comment">// Skip the properties that should not be overwritten</span><br>        <span class="hljs-keyword">if</span> (shouldIgnore[key]) &#123;<br>            <span class="hljs-keyword">return</span>;<br>        &#125;<br>        <span class="hljs-comment">// Some browsers does not allow reconfigure built-in properties</span><br>        <span class="hljs-keyword">const</span> extendedDescriptor = <span class="hljs-title class_">Object</span>.<span class="hljs-title function_">getOwnPropertyDescriptor</span>(<span class="hljs-title class_">Extended</span>, key);<br>      	<span class="hljs-comment">// 如果实例在vue子类上存在了并且不可以改变配置 则直接return</span><br>        <span class="hljs-keyword">if</span> (extendedDescriptor &amp;&amp; !extendedDescriptor.<span class="hljs-property">configurable</span>) &#123;<br>            <span class="hljs-keyword">return</span>;<br>        &#125;<br>        <span class="hljs-keyword">const</span> descriptor = <span class="hljs-title class_">Object</span>.<span class="hljs-title function_">getOwnPropertyDescriptor</span>(<span class="hljs-title class_">Original</span>, key);<br>        <span class="hljs-comment">// If the user agent does not support `__proto__` or its family (IE &lt;= 10),</span><br>        <span class="hljs-comment">// the sub class properties may be inherited properties from the super class in TypeScript.</span><br>        <span class="hljs-comment">// We need to exclude such properties to prevent to overwrite</span><br>        <span class="hljs-comment">// the component options object which stored on the extended constructor (See #192).</span><br>        <span class="hljs-comment">// If the value is a referenced value (object or function),</span><br>        <span class="hljs-comment">// we can check equality of them and exclude it if they have the same reference.</span><br>        <span class="hljs-comment">// If it is a primitive value, it will be forwarded for safety.</span><br>        <span class="hljs-keyword">if</span> (!hasProto) &#123;<br>            <span class="hljs-comment">// Only `cid` is explicitly exluded from property forwarding</span><br>            <span class="hljs-comment">// because we cannot detect whether it is a inherited property or not</span><br>            <span class="hljs-comment">// on the no `__proto__` environment even though the property is reserved.</span><br>            <span class="hljs-keyword">if</span> (key === <span class="hljs-string">&#x27;cid&#x27;</span>) &#123;<br>                <span class="hljs-keyword">return</span>;<br>            &#125;<br>            <span class="hljs-keyword">const</span> superDescriptor = <span class="hljs-title class_">Object</span>.<span class="hljs-title function_">getOwnPropertyDescriptor</span>(<span class="hljs-title class_">Super</span>, key);<br>          	<span class="hljs-comment">// 如果是一个基本的数据类型 并且环境并不支持__proto__ 的形式 子类和父类都有相同的引用 则将其排除</span><br>            <span class="hljs-keyword">if</span> (!<span class="hljs-title function_">isPrimitive</span>(descriptor.<span class="hljs-property">value</span>) &amp;&amp;<br>                superDescriptor &amp;&amp;<br>                superDescriptor.<span class="hljs-property">value</span> === descriptor.<span class="hljs-property">value</span>) &#123;<br>                <span class="hljs-keyword">return</span>;<br>            &#125;<br>        &#125;<br>        <span class="hljs-comment">// Warn if the users manually declare reserved properties</span><br>        <span class="hljs-keyword">if</span> (process.<span class="hljs-property">env</span>.<span class="hljs-property">NODE_ENV</span> !== <span class="hljs-string">&#x27;production&#x27;</span> &amp;&amp;<br>            reservedPropertyNames.<span class="hljs-title function_">indexOf</span>(key) &gt;= <span class="hljs-number">0</span>) &#123;<br>            <span class="hljs-title function_">warn</span>(<span class="hljs-string">`Static property name &#x27;<span class="hljs-subst">$&#123;key&#125;</span>&#x27; declared on class &#x27;<span class="hljs-subst">$&#123;Original.name&#125;</span>&#x27; `</span> +<br>                <span class="hljs-string">&#x27;conflicts with reserved property name of Vue internal. &#x27;</span> +<br>                <span class="hljs-string">&#x27;It may cause unexpected behavior of the component. Consider renaming the property.&#x27;</span>);<br>        &#125;<br>      	<span class="hljs-comment">// 这里将静态属性以及配置转移到vue.extend 出来的子类中了</span><br>        <span class="hljs-title class_">Object</span>.<span class="hljs-title function_">defineProperty</span>(<span class="hljs-title class_">Extended</span>, key, descriptor);<br>    &#125;);<br>&#125;<br><br><br></code></pre></td></tr></table></figure>
+
+<blockquote>
+<p>collectDataFromConstructor 函数的解释</p>
+</blockquote>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br></pre></td><td class="code"><pre><code class="hljs js"><span class="hljs-keyword">import</span> <span class="hljs-title class_">Vue</span> <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;vue&#x27;</span>;<br><span class="hljs-keyword">import</span> &#123; warn &#125; <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;./util&#x27;</span>;<br><span class="hljs-keyword">export</span> <span class="hljs-keyword">function</span> <span class="hljs-title function_">collectDataFromConstructor</span>(<span class="hljs-params">vm, Component</span>) &#123;<br>    <span class="hljs-comment">// override _init to prevent to init as Vue instance</span><br>  	<span class="hljs-comment">// 这里重写了vue在constructor中的_init函数</span><br>    <span class="hljs-keyword">const</span> originalInit = <span class="hljs-title class_">Component</span>.<span class="hljs-property"><span class="hljs-keyword">prototype</span></span>.<span class="hljs-property">_init</span>;<br>    <span class="hljs-title class_">Component</span>.<span class="hljs-property"><span class="hljs-keyword">prototype</span></span>.<span class="hljs-property">_init</span> = <span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) &#123;<br>        <span class="hljs-comment">// proxy to actual vm</span><br>      	<span class="hljs-comment">// 获取vue实例上的所有属性集合 是 $options _uid 方法等参数 对其进行数据劫持</span><br>      	<span class="hljs-comment">// 后续为了使其不可遍历</span><br>        <span class="hljs-keyword">const</span> keys = <span class="hljs-title class_">Object</span>.<span class="hljs-title function_">getOwnPropertyNames</span>(vm);<br>        <span class="hljs-comment">// 2.2.0 compat (props are no longer exposed as self properties)</span><br>        <span class="hljs-keyword">if</span> (vm.<span class="hljs-property">$options</span>.<span class="hljs-property">props</span>) &#123;<br>            <span class="hljs-keyword">for</span> (<span class="hljs-keyword">const</span> key <span class="hljs-keyword">in</span> vm.<span class="hljs-property">$options</span>.<span class="hljs-property">props</span>) &#123;<br>                <span class="hljs-keyword">if</span> (!vm.<span class="hljs-title function_">hasOwnProperty</span>(key)) &#123;<br>                    keys.<span class="hljs-title function_">push</span>(key);<br>                &#125;<br>            &#125;<br>        &#125;<br>        keys.<span class="hljs-title function_">forEach</span>(<span class="hljs-function"><span class="hljs-params">key</span> =&gt;</span> &#123;<br>          <span class="hljs-comment">// ie8对于访问器属性描述符，configurable 必须设置为 true，enumerable 必须设置为 false</span><br>          <span class="hljs-comment">// 这里设置了configurable（configurable 默认为false）</span><br>          <span class="hljs-comment">// 后续的init操作后 会将这些属性加上不可遍历的</span><br>            <span class="hljs-title class_">Object</span>.<span class="hljs-title function_">defineProperty</span>(<span class="hljs-variable language_">this</span>, key, &#123;<br>                <span class="hljs-attr">get</span>: <span class="hljs-function">() =&gt;</span> vm[key],<br>                <span class="hljs-attr">set</span>: <span class="hljs-function"><span class="hljs-params">value</span> =&gt;</span> &#123; vm[key] = value; &#125;,<br>                <span class="hljs-attr">configurable</span>: <span class="hljs-literal">true</span><br>            &#125;);<br>        &#125;);<br>    &#125;;<br>    <span class="hljs-comment">// should be acquired class property values</span><br>    <span class="hljs-keyword">const</span> data = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Component</span>();<br>    <span class="hljs-comment">// restore original _init to avoid memory leak (#209)</span><br>    <span class="hljs-title class_">Component</span>.<span class="hljs-property"><span class="hljs-keyword">prototype</span></span>.<span class="hljs-property">_init</span> = originalInit;<br>    <span class="hljs-comment">// create plain data object</span><br>    <span class="hljs-keyword">const</span> plainData = &#123;&#125;;<br>  	<span class="hljs-comment">// new 出来的对象中的props 方法 以及vue的一些属性都被添加上了不可枚举的属性</span><br>  	<span class="hljs-comment">// 因此这里的枚举出来的data就是所需要的data</span><br>    <span class="hljs-title class_">Object</span>.<span class="hljs-title function_">keys</span>(data).<span class="hljs-title function_">forEach</span>(<span class="hljs-function"><span class="hljs-params">key</span> =&gt;</span> &#123;<br>        <span class="hljs-keyword">if</span> (data[key] !== <span class="hljs-literal">undefined</span>) &#123;<br>            plainData[key] = data[key];<br>        &#125;<br>    &#125;);<br>    <span class="hljs-keyword">if</span> (process.<span class="hljs-property">env</span>.<span class="hljs-property">NODE_ENV</span> !== <span class="hljs-string">&#x27;production&#x27;</span>) &#123;<br>        <span class="hljs-keyword">if</span> (!(<span class="hljs-title class_">Component</span>.<span class="hljs-property"><span class="hljs-keyword">prototype</span></span> <span class="hljs-keyword">instanceof</span> <span class="hljs-title class_">Vue</span>) &amp;&amp; <span class="hljs-title class_">Object</span>.<span class="hljs-title function_">keys</span>(plainData).<span class="hljs-property">length</span> &gt; <span class="hljs-number">0</span>) &#123;<br>            <span class="hljs-title function_">warn</span>(<span class="hljs-string">&#x27;Component class must inherit Vue or its descendant class &#x27;</span> +<br>                <span class="hljs-string">&#x27;when class property is used.&#x27;</span>);<br>        &#125;<br>    &#125;<br>    <span class="hljs-keyword">return</span> plainData;<br>&#125;<br><br></code></pre></td></tr></table></figure>
+
+<p>relect.js</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><code class="hljs js"><span class="hljs-comment">// The rational behind the verbose Reflect-feature check below is the fact that there are polyfills</span><br><span class="hljs-comment">// which add an implementation for Reflect.defineMetadata but not for Reflect.getOwnMetadataKeys.</span><br><span class="hljs-comment">// Without this check consumers will encounter hard to track down runtime errors.</span><br><span class="hljs-keyword">export</span> <span class="hljs-keyword">function</span> <span class="hljs-title function_">reflectionIsSupported</span>(<span class="hljs-params"></span>) &#123;<br>    <span class="hljs-keyword">return</span> <span class="hljs-keyword">typeof</span> <span class="hljs-title class_">Reflect</span> !== <span class="hljs-string">&#x27;undefined&#x27;</span> &amp;&amp; <span class="hljs-title class_">Reflect</span>.<span class="hljs-property">defineMetadata</span> &amp;&amp; <span class="hljs-title class_">Reflect</span>.<span class="hljs-property">getOwnMetadataKeys</span>;<br>&#125;<br><span class="hljs-keyword">export</span> <span class="hljs-keyword">function</span> <span class="hljs-title function_">copyReflectionMetadata</span>(<span class="hljs-params">to, <span class="hljs-keyword">from</span></span>) &#123;<br>    <span class="hljs-title function_">forwardMetadata</span>(to, <span class="hljs-keyword">from</span>);<br>    <span class="hljs-title class_">Object</span>.<span class="hljs-title function_">getOwnPropertyNames</span>(<span class="hljs-keyword">from</span>.<span class="hljs-property"><span class="hljs-keyword">prototype</span></span>).<span class="hljs-title function_">forEach</span>(<span class="hljs-function"><span class="hljs-params">key</span> =&gt;</span> &#123;<br>        <span class="hljs-title function_">forwardMetadata</span>(to.<span class="hljs-property"><span class="hljs-keyword">prototype</span></span>, <span class="hljs-keyword">from</span>.<span class="hljs-property"><span class="hljs-keyword">prototype</span></span>, key);<br>    &#125;);<br>    <span class="hljs-title class_">Object</span>.<span class="hljs-title function_">getOwnPropertyNames</span>(<span class="hljs-keyword">from</span>).<span class="hljs-title function_">forEach</span>(<span class="hljs-function"><span class="hljs-params">key</span> =&gt;</span> &#123;<br>        <span class="hljs-title function_">forwardMetadata</span>(to, <span class="hljs-keyword">from</span>, key);<br>    &#125;);<br>&#125;<br><span class="hljs-keyword">function</span> <span class="hljs-title function_">forwardMetadata</span>(<span class="hljs-params">to, <span class="hljs-keyword">from</span>, propertyKey</span>) &#123;<br>    <span class="hljs-keyword">const</span> metaKeys = propertyKey<br>        ? <span class="hljs-title class_">Reflect</span>.<span class="hljs-title function_">getOwnMetadataKeys</span>(<span class="hljs-keyword">from</span>, propertyKey)<br>        : <span class="hljs-title class_">Reflect</span>.<span class="hljs-title function_">getOwnMetadataKeys</span>(<span class="hljs-keyword">from</span>);<br>    metaKeys.<span class="hljs-title function_">forEach</span>(<span class="hljs-function"><span class="hljs-params">metaKey</span> =&gt;</span> &#123;<br>        <span class="hljs-keyword">const</span> metadata = propertyKey<br>            ? <span class="hljs-title class_">Reflect</span>.<span class="hljs-title function_">getOwnMetadata</span>(metaKey, <span class="hljs-keyword">from</span>, propertyKey)<br>            : <span class="hljs-title class_">Reflect</span>.<span class="hljs-title function_">getOwnMetadata</span>(metaKey, <span class="hljs-keyword">from</span>);<br>        <span class="hljs-keyword">if</span> (propertyKey) &#123;<br>            <span class="hljs-title class_">Reflect</span>.<span class="hljs-title function_">defineMetadata</span>(metaKey, metadata, to, propertyKey);<br>        &#125;<br>        <span class="hljs-keyword">else</span> &#123;<br>            <span class="hljs-title class_">Reflect</span>.<span class="hljs-title function_">defineMetadata</span>(metaKey, metadata, to);<br>        &#125;<br>    &#125;);<br>&#125;<br></code></pre></td></tr></table></figure>
+
+
+<h1 id="utils"><a href="#utils" class="headerlink" title="utils"></a>utils</h1><blockquote>
+<p>内置工具类的函数</p>
+</blockquote>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><code class="hljs js"><span class="hljs-keyword">import</span> <span class="hljs-title class_">Vue</span> <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;vue&#x27;</span>;<br><span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> <span class="hljs-title function_">noop</span> = (<span class="hljs-params"></span>) =&gt; &#123; &#125;;<br><span class="hljs-keyword">const</span> fakeArray = &#123; <span class="hljs-attr">__proto__</span>: [] &#125;;<br><span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> hasProto = fakeArray <span class="hljs-keyword">instanceof</span> <span class="hljs-title class_">Array</span>;<br><span class="hljs-keyword">export</span> <span class="hljs-keyword">function</span> <span class="hljs-title function_">createDecorator</span>(<span class="hljs-params">factory</span>) &#123;<br>    <span class="hljs-keyword">return</span> <span class="hljs-function">(<span class="hljs-params">target, key, index</span>) =&gt;</span> &#123;<br>        <span class="hljs-keyword">const</span> <span class="hljs-title class_">Ctor</span> = <span class="hljs-keyword">typeof</span> target === <span class="hljs-string">&#x27;function&#x27;</span><br>            ? target<br>            : target.<span class="hljs-property">constructor</span>;<br>        <span class="hljs-keyword">if</span> (!<span class="hljs-title class_">Ctor</span>.<span class="hljs-property">__decorators__</span>) &#123;<br>            <span class="hljs-title class_">Ctor</span>.<span class="hljs-property">__decorators__</span> = [];<br>        &#125;<br>        <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> index !== <span class="hljs-string">&#x27;number&#x27;</span>) &#123;<br>            index = <span class="hljs-literal">undefined</span>;<br>        &#125;<br>        <span class="hljs-title class_">Ctor</span>.<span class="hljs-property">__decorators__</span>.<span class="hljs-title function_">push</span>(<span class="hljs-function"><span class="hljs-params">options</span> =&gt;</span> <span class="hljs-title function_">factory</span>(options, key, index));<br>    &#125;;<br>&#125;<br><span class="hljs-keyword">export</span> <span class="hljs-keyword">function</span> <span class="hljs-title function_">mixins</span>(<span class="hljs-params">...Ctors</span>) &#123;<br>    <span class="hljs-keyword">return</span> <span class="hljs-title class_">Vue</span>.<span class="hljs-title function_">extend</span>(&#123; <span class="hljs-attr">mixins</span>: <span class="hljs-title class_">Ctors</span> &#125;);<br>&#125;<br><span class="hljs-keyword">export</span> <span class="hljs-keyword">function</span> <span class="hljs-title function_">isPrimitive</span>(<span class="hljs-params">value</span>) &#123;<br>    <span class="hljs-keyword">const</span> type = <span class="hljs-keyword">typeof</span> value;<br>    <span class="hljs-keyword">return</span> value == <span class="hljs-literal">null</span> || (type !== <span class="hljs-string">&#x27;object&#x27;</span> &amp;&amp; type !== <span class="hljs-string">&#x27;function&#x27;</span>);<br>&#125;<br><span class="hljs-keyword">export</span> <span class="hljs-keyword">function</span> <span class="hljs-title function_">warn</span>(<span class="hljs-params">message</span>) &#123;<br>    <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> <span class="hljs-variable language_">console</span> !== <span class="hljs-string">&#x27;undefined&#x27;</span>) &#123;<br>        <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">warn</span>(<span class="hljs-string">&#x27;[vue-class-component] &#x27;</span> + message);<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/%E5%89%8D%E7%AB%AF/" class="category-chain-item">前端</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>vue-class-component 源码解析</div>
+      <div>https://blog.zpangxie.top/2023/08/a360ef5f1032.html</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>Crab</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2023年8月11日</div>
+        </div>
+      
+      
+      <div class="license-meta-item">
+        <div>许可协议</div>
+        <div>
+          
+            
+            
+              <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+              <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                <i class="iconfont icon-by"></i>
+              </span>
+              </a>
+            
+          
+        </div>
+      </div>
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2023/03/2efe13c3f3c6.html" title="整理JavaScript数组去重的种种方法">
+                        <span class="hidden-mobile">整理JavaScript数组去重的种种方法</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+      <a href="https://zpangxie.github.io/" target="_blank" rel="nofollow noopener"><span>Crab</span></a>
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      headingSelector : CONFIG.toc.headingSelector || 'h1,h2,h3,h4,h5,h6',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      collapseDepth   : CONFIG.toc.collapseDepth || 0,
+      scrollSmooth    : true,
+      headingsOffset  : -boardTop
+    });
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.10/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

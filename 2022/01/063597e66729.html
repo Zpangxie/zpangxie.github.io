@@ -1,0 +1,673 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/crab.jpg">
+  <link rel="icon" href="/img/crab.jpg">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="Crab">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="1. 实现场景 分析的例子来源于：https:&#x2F;&#x2F;www.zhihu.com&#x2F;question&#x2F;23486749 作者：无邪气  存在有这样一个场景：当在一个数据中心中，用户需要从数据中心中取数据，等待数据中心将数据打包后，用户便可以获取数据。 2. 观察者模式的实现2.1 UML类图 2.2 具体实现在程序创建了一个任务中心后，再分别创建多个 DownloadTask 即创建多个下载任务，使用">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Javascript设计模式——观察者模式与发布订阅模式的对比">
+<meta property="og:url" content="https://blog.zpangxie.top/2022/01/063597e66729.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="1. 实现场景 分析的例子来源于：https:&#x2F;&#x2F;www.zhihu.com&#x2F;question&#x2F;23486749 作者：无邪气  存在有这样一个场景：当在一个数据中心中，用户需要从数据中心中取数据，等待数据中心将数据打包后，用户便可以获取数据。 2. 观察者模式的实现2.1 UML类图 2.2 具体实现在程序创建了一个任务中心后，再分别创建多个 DownloadTask 即创建多个下载任务，使用">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://s2.loli.net/2023/04/22/UKEnGWFjJ8azfRc.png">
+<meta property="og:image" content="https://s2.loli.net/2023/04/22/2NSnwFA4Vcx6UIh.png">
+<meta property="article:published_time" content="2022-01-12T14:00:57.000Z">
+<meta property="article:modified_time" content="2023-08-11T03:04:50.949Z">
+<meta property="article:author" content="Crab">
+<meta property="article:tag" content="JS">
+<meta property="article:tag" content="设计模式">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://s2.loli.net/2023/04/22/UKEnGWFjJ8azfRc.png">
+  
+  
+  
+  <title>Javascript设计模式——观察者模式与发布订阅模式的对比 - Hexo</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"blog.zpangxie.top","root":"/","version":"1.9.2","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.2.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Crab-Blog</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              &nbsp;<i class="iconfont icon-search"></i>&nbsp;
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="Javascript设计模式——观察者模式与发布订阅模式的对比"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2022-01-12 22:00" pubdate>
+          2022年1月12日 晚上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          5.1k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          43 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">Javascript设计模式——观察者模式与发布订阅模式的对比</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h1 id="1-实现场景"><a href="#1-实现场景" class="headerlink" title="1. 实现场景"></a>1. 实现场景</h1><blockquote>
+<p>分析的例子来源于：<a target="_blank" rel="noopener" href="https://www.zhihu.com/question/23486749">https://www.zhihu.com/question/23486749</a> 作者：无邪气</p>
+</blockquote>
+<p>存在有这样一个场景：当在一个数据中心中，用户需要从数据中心中取数据，等待数据中心将数据打包后，用户便可以获取数据。</p>
+<h1 id="2-观察者模式的实现"><a href="#2-观察者模式的实现" class="headerlink" title="2. 观察者模式的实现"></a>2. 观察者模式的实现</h1><h2 id="2-1-UML类图"><a href="#2-1-UML类图" class="headerlink" title="2.1 UML类图"></a>2.1 UML类图</h2><p><img src="https://s2.loli.net/2023/04/22/UKEnGWFjJ8azfRc.png" srcset="/img/loading.gif" lazyload></p>
+<h2 id="2-2-具体实现"><a href="#2-2-具体实现" class="headerlink" title="2.2 具体实现"></a>2.2 具体实现</h2><p>在程序创建了一个任务中心后，再分别创建多个 DownloadTask 即创建多个下载任务，使用 <code>dataHub.addDownloadTask()</code> 来将下载任务添加到任务列表中，那么接下来当任务中心使用 <code>dataHub.notify()</code> 方法传入数据链接后，下载线程就会得到数据链接并实施具体的方法。</p>
+<blockquote>
+<p>客户端不会去主动调用下载线程（观察者）的 <code>finish()</code> 方法，而是交给数据中心（被观察对象）去调用。</p>
+</blockquote>
+<h3 id="2-2-1-创建-DownloadTask-类作为观察者"><a href="#2-2-1-创建-DownloadTask-类作为观察者" class="headerlink" title="2.2.1 创建 DownloadTask 类作为观察者"></a>2.2.1 创建 DownloadTask 类作为观察者</h3><p>DownloadTask类即为该系统中的观察者，观察者有 <code>id</code>、<code>loaded</code>、<code>url</code> 属性，在其上面挂载了一个 <code>finish()</code> 方法，当被观察对象发出指令操作时，这个方法就会被触发。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs javascript"><span class="hljs-keyword">function</span> <span class="hljs-title function_">DownloadTask</span>(<span class="hljs-params">id</span>) &#123;<br>  <span class="hljs-variable language_">this</span>.<span class="hljs-property">id</span> = id;<br>  <span class="hljs-variable language_">this</span>.<span class="hljs-property">loaded</span> = <span class="hljs-literal">false</span>;<br>  <span class="hljs-variable language_">this</span>.<span class="hljs-property">url</span> = <span class="hljs-literal">null</span>;<br>&#125;<br><br><span class="hljs-title class_">DownloadTask</span>.<span class="hljs-property"><span class="hljs-keyword">prototype</span></span>.<span class="hljs-property">finish</span> = <span class="hljs-keyword">function</span>(<span class="hljs-params">url</span>) &#123;<br>  <span class="hljs-variable language_">this</span>.<span class="hljs-property">loaded</span> = <span class="hljs-literal">true</span>;<br>  <span class="hljs-variable language_">this</span>.<span class="hljs-property">url</span> = url;<br>  <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&#x27;Task &#x27;</span> + <span class="hljs-variable language_">this</span>.<span class="hljs-property">id</span> + <span class="hljs-string">&#x27; load data from &#x27;</span> + url);<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h3 id="2-2-2-创建-DownloadTaskList-类作为管理器"><a href="#2-2-2-创建-DownloadTaskList-类作为管理器" class="headerlink" title="2.2.2 创建 DownloadTaskList 类作为管理器"></a>2.2.2 创建 DownloadTaskList 类作为管理器</h3><p>DownloadTaskList类主要负责提供一个任务队列和一些附加的管理方法，方便管理观察者：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><code class="hljs javascript"><span class="hljs-keyword">function</span> <span class="hljs-title function_">DownloadTaskList</span>(<span class="hljs-params"></span>) &#123;<br>  <span class="hljs-variable language_">this</span>.<span class="hljs-property">downloadTaskList</span> = [];<br>&#125;<br><br><span class="hljs-title class_">DownloadTaskList</span>.<span class="hljs-property"><span class="hljs-keyword">prototype</span></span>.<span class="hljs-property">getCount</span> = <span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) &#123;<br>  <span class="hljs-keyword">return</span> <span class="hljs-variable language_">this</span>.<span class="hljs-property">downloadTaskList</span>.<span class="hljs-property">length</span>;<br>&#125;;<br><br><span class="hljs-title class_">DownloadTaskList</span>.<span class="hljs-property"><span class="hljs-keyword">prototype</span></span>.<span class="hljs-property">get</span> = <span class="hljs-keyword">function</span>(<span class="hljs-params">index</span>) &#123;<br>  <span class="hljs-keyword">return</span> <span class="hljs-variable language_">this</span>.<span class="hljs-property">downloadTaskList</span>[index];<br>&#125;;<br><br><span class="hljs-title class_">DownloadTaskList</span>.<span class="hljs-property"><span class="hljs-keyword">prototype</span></span>.<span class="hljs-property">add</span> = <span class="hljs-keyword">function</span>(<span class="hljs-params">obj</span>) &#123;<br>  <span class="hljs-keyword">return</span> <span class="hljs-variable language_">this</span>.<span class="hljs-property">downloadTaskList</span>.<span class="hljs-title function_">push</span>(obj);<br>&#125;;<br><br><span class="hljs-title class_">DownloadTaskList</span>.<span class="hljs-property"><span class="hljs-keyword">prototype</span></span>.<span class="hljs-property">remove</span> = <span class="hljs-keyword">function</span>(<span class="hljs-params">obj</span>) &#123;<br>  <span class="hljs-keyword">const</span> downloadTaskCount = <span class="hljs-variable language_">this</span>.<span class="hljs-property">downloadTasks</span>.<span class="hljs-title function_">getCount</span>();<br>  <span class="hljs-keyword">while</span> (i &lt; downloadTaskCount) &#123;<br>    <span class="hljs-keyword">if</span> (<span class="hljs-variable language_">this</span>.<span class="hljs-property">downloadTaskList</span>[i] === obj) &#123;<br>      <span class="hljs-variable language_">this</span>.<span class="hljs-property">downloadTaskList</span>.<span class="hljs-title function_">splice</span>(i, <span class="hljs-number">1</span>);<br>      <span class="hljs-keyword">break</span>;<br>    &#125;<br>    i++;<br>  &#125;<br>&#125;;<br></code></pre></td></tr></table></figure>
+
+<h3 id="2-2-3-创建-DataHub-类作为被观察对象"><a href="#2-2-3-创建-DataHub-类作为被观察对象" class="headerlink" title="2.2.3 创建 DataHub 类作为被观察对象"></a>2.2.3 创建 DataHub 类作为被观察对象</h3><p>DataHub类作为被观察对象，被观察对象通知观察者其实现原理就是在 <code>DataHub</code> 类的 <code>notify()</code> 方法中，去遍历数据中心中的下载队列（观察者队列）中的所有任务（观察者），在这些下载任务的实例（观察者）上调用其 <code>finish()</code> 方法，并传入参数 <code>url</code>。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><code class="hljs javascript"><span class="hljs-keyword">function</span> <span class="hljs-title function_">DataHub</span>(<span class="hljs-params"></span>) &#123;<br>  <span class="hljs-variable language_">this</span>.<span class="hljs-property">downloadTasks</span> = <span class="hljs-keyword">new</span> <span class="hljs-title class_">DownloadTaskList</span>();<br>&#125;<br><br><span class="hljs-title class_">DataHub</span>.<span class="hljs-property"><span class="hljs-keyword">prototype</span></span>.<span class="hljs-property">addDownloadTask</span> = <span class="hljs-keyword">function</span>(<span class="hljs-params">downloadTask</span>) &#123;<br>  <span class="hljs-variable language_">this</span>.<span class="hljs-property">downloadTasks</span>.<span class="hljs-title function_">add</span>(downloadTask);<br>&#125;;<br><br><span class="hljs-title class_">DataHub</span>.<span class="hljs-property"><span class="hljs-keyword">prototype</span></span>.<span class="hljs-property">removeDownloadTask</span> = <span class="hljs-keyword">function</span>(<span class="hljs-params">downloadTask</span>) &#123;<br>  <span class="hljs-variable language_">this</span>.<span class="hljs-property">downloadTasks</span>.<span class="hljs-title function_">remove</span>(downloadTask);<br>&#125;;<br><br><span class="hljs-title class_">DataHub</span>.<span class="hljs-property"><span class="hljs-keyword">prototype</span></span>.<span class="hljs-property">notify</span> = <span class="hljs-keyword">function</span>(<span class="hljs-params">url</span>) &#123;<br>  <span class="hljs-keyword">const</span> downloadTaskCount = <span class="hljs-variable language_">this</span>.<span class="hljs-property">downloadTasks</span>.<span class="hljs-title function_">getCount</span>();<br>  <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>; i &lt; downloadTaskCount; i++) &#123;<br>    <span class="hljs-variable language_">this</span>.<span class="hljs-property">downloadTasks</span>.<span class="hljs-title function_">get</span>(i).<span class="hljs-title function_">finish</span>(url);<br>  &#125;<br>&#125;;<br></code></pre></td></tr></table></figure>
+
+<h3 id="2-2-4-客户端"><a href="#2-2-4-客户端" class="headerlink" title="2.2.4 客户端"></a>2.2.4 客户端</h3><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs javascript"><span class="hljs-comment">// 创建一个数据中心</span><br><span class="hljs-keyword">var</span> dataHub = <span class="hljs-keyword">new</span> <span class="hljs-title class_">DataHub</span>();<br><br><span class="hljs-comment">// 现在用户来取数据了，创建两个任务</span><br><span class="hljs-keyword">var</span> downloadTask1 = <span class="hljs-keyword">new</span> <span class="hljs-title class_">DownloadTask</span>(<span class="hljs-number">1</span>);<br><span class="hljs-keyword">var</span> downloadTask2 = <span class="hljs-keyword">new</span> <span class="hljs-title class_">DownloadTask</span>(<span class="hljs-number">2</span>);<br><br><span class="hljs-comment">// 将任务添加到观察者队列中</span><br>dataHub.<span class="hljs-title function_">addDownloadTask</span>(downloadTask1);<br>dataHub.<span class="hljs-title function_">addDownloadTask</span>(downloadTask2);<br><br><span class="hljs-comment">// 数据打包完成了</span><br>dataHub.<span class="hljs-title function_">notify</span>(<span class="hljs-string">&#x27;http://somedomain.someaddress&#x27;</span>);<br></code></pre></td></tr></table></figure>
+
+<h3 id="3-2-5-结果"><a href="#3-2-5-结果" class="headerlink" title="3.2.5 结果"></a>3.2.5 结果</h3><figure class="highlight gradle"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs gradle"><span class="hljs-keyword">Task</span> <span class="hljs-number">1</span> load data <span class="hljs-keyword">from</span> http:<span class="hljs-comment">//somedomain.someaddress</span><br><span class="hljs-keyword">Task</span> <span class="hljs-number">2</span> load data <span class="hljs-keyword">from</span> http:<span class="hljs-comment">//somedomain.someaddress</span><br></code></pre></td></tr></table></figure>
+
+<h1 id="3-发布订阅模式的实现"><a href="#3-发布订阅模式的实现" class="headerlink" title="3. 发布订阅模式的实现"></a>3. 发布订阅模式的实现</h1><h2 id="3-1-UML类图"><a href="#3-1-UML类图" class="headerlink" title="3.1 UML类图"></a>3.1 UML类图</h2><p><img src="https://s2.loli.net/2023/04/22/2NSnwFA4Vcx6UIh.png" srcset="/img/loading.gif" lazyload></p>
+<h2 id="3-2-具体实现"><a href="#3-2-具体实现" class="headerlink" title="3.2 具体实现"></a>3.2 具体实现</h2><h3 id="3-2-1-定义-DataHub-类作为发布者"><a href="#3-2-1-定义-DataHub-类作为发布者" class="headerlink" title="3.2.1 定义 DataHub 类作为发布者"></a>3.2.1 定义 DataHub 类作为发布者</h3><p>创建 DataHub 作为事件的发布者，当发布者调用 <code>notify()</code> 方法后，会触发一个回调函数，在这个回调函数中会去调用 DownloadManager 对象下的 <code>publish()</code> 方法，这样就相当于做了一个事件的发布。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs javascript"><span class="hljs-keyword">function</span> <span class="hljs-title function_">DataHub</span>(<span class="hljs-params"></span>) &#123;&#125;<br><br><span class="hljs-title class_">DataHub</span>.<span class="hljs-property"><span class="hljs-keyword">prototype</span></span>.<span class="hljs-property">notify</span> = <span class="hljs-keyword">function</span>(<span class="hljs-params">url, callback</span>) &#123;<br>  <span class="hljs-title function_">callback</span>(url);<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h3 id="3-2-2-定义-DownloadManager-类作为事件通道"><a href="#3-2-2-定义-DownloadManager-类作为事件通道" class="headerlink" title="3.2.2 定义 DownloadManager 类作为事件通道"></a>3.2.2 定义 DownloadManager 类作为事件通道</h3><p>DownloadManager 对象是发布订阅模式中的数据处理中心，它负责了事件的订阅与发布，包括处理发布的消息数据。</p>
+<p>DownloadManager 类中有两个属性，一个是 <code>events</code> 存放了订阅事件以及对应事件的订阅者，<code>uId</code> 作为计数器，记录订阅者的ID。</p>
+<p>其中，<code>events</code> 的结构为：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs javascript">&#123; <br>  <span class="hljs-string">&quot;订阅事件1&quot;</span>: [<br>    &#123;<span class="hljs-attr">taskId</span>: <span class="hljs-title class_">Number</span>, <span class="hljs-attr">handler</span>: <span class="hljs-title class_">Function</span>&#125;, <span class="hljs-comment">// 订阅者1_1</span><br>    &#123;<span class="hljs-attr">taskId</span>: <span class="hljs-title class_">Number</span>, <span class="hljs-attr">handler</span>: <span class="hljs-title class_">Function</span>&#125;, <span class="hljs-comment">// 订阅者1_2</span><br>  ], <br>  <span class="hljs-string">&quot;订阅事件2&quot;</span>: [<br>    &#123;<span class="hljs-attr">taskId</span>: <span class="hljs-title class_">Number</span>, <span class="hljs-attr">handler</span>: <span class="hljs-title class_">Function</span>&#125;, <span class="hljs-comment">// 订阅者2_1</span><br>    &#123;<span class="hljs-attr">taskId</span>: <span class="hljs-title class_">Number</span>, <span class="hljs-attr">handler</span>: <span class="hljs-title class_">Function</span>&#125;, <span class="hljs-comment">// 订阅者2_2</span><br>  ]&#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs javascript"><span class="hljs-keyword">function</span> <span class="hljs-title function_">DownloadManager</span>(<span class="hljs-params"></span>) &#123;<br>  <span class="hljs-variable language_">this</span>.<span class="hljs-property">events</span> = &#123;&#125;;<br>  <span class="hljs-variable language_">this</span>.<span class="hljs-property">uId</span> = -<span class="hljs-number">1</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>在 DownloadManager 的追加一个 publish 方法函数，用来给发布者发布某一事件：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><code class="hljs javascript"><span class="hljs-comment">// 发布</span><br><span class="hljs-title class_">DownloadManager</span>.<span class="hljs-property"><span class="hljs-keyword">prototype</span></span>.<span class="hljs-property">publish</span> = <span class="hljs-keyword">function</span>(<span class="hljs-params">eventType, url</span>) &#123;<br>  <span class="hljs-keyword">if</span> (!<span class="hljs-variable language_">this</span>.<span class="hljs-property">events</span>[eventType]) &#123;<br>    <span class="hljs-comment">// 判断是否有订阅者订阅该事件,</span><br>    <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;<br>  &#125;<br>  <span class="hljs-comment">// </span><br>  <span class="hljs-keyword">var</span> subscribers = <span class="hljs-variable language_">this</span>.<span class="hljs-property">events</span>[eventType],<br>    count = subscribers ? subscribers.<span class="hljs-property">length</span> : <span class="hljs-number">0</span>;<br>  <span class="hljs-comment">// 循环遍历订阅事件队列中的订阅者</span><br>  <span class="hljs-keyword">while</span> (count--) &#123;<br>    <span class="hljs-keyword">var</span> subscriber = subscribers[count];<br>    subscriber.<span class="hljs-title function_">handler</span>(eventType, subscriber.<span class="hljs-property">taskId</span>, url);<br>  &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>在 DownloadManager 的追加一个 subscribe 方法函数，用来给订阅者订阅某一事件：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs javascript"><span class="hljs-comment">// 订阅</span><br><span class="hljs-title class_">DownloadManager</span>.<span class="hljs-property"><span class="hljs-keyword">prototype</span></span>.<span class="hljs-property">subscribe</span> = <span class="hljs-keyword">function</span>(<span class="hljs-params">eventType, handler</span>) &#123;<br>  <span class="hljs-keyword">if</span> (!<span class="hljs-variable language_">this</span>.<span class="hljs-property">events</span>[eventType]) &#123;<br>    <span class="hljs-comment">// 如果订阅的事件不存在，就在 events 对象中创建一个，让其值为一个空数组，用来存放订阅该事件的订阅者</span><br>    <span class="hljs-variable language_">this</span>.<span class="hljs-property">events</span>[eventType] = [];<br>  &#125;<br>  <span class="hljs-keyword">var</span> taskId = (++<span class="hljs-variable language_">this</span>.<span class="hljs-property">uId</span>).<span class="hljs-title function_">toString</span>();<br>  <span class="hljs-comment">// 将该订阅者放入对应的事件的订阅者队列中</span><br>  <span class="hljs-variable language_">this</span>.<span class="hljs-property">events</span>[eventType].<span class="hljs-title function_">push</span>(&#123;<br>    <span class="hljs-attr">taskId</span>: taskId,<br>    <span class="hljs-attr">handler</span>: handler<br>  &#125;);<br>  <span class="hljs-keyword">return</span> taskId;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h3 id="3-2-3-客户端函数"><a href="#3-2-3-客户端函数" class="headerlink" title="3.2.3 客户端函数"></a>3.2.3 客户端函数</h3><p>客户端一定要遵循先设置订阅，后设置发布的原则。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><code class="hljs javascript"><span class="hljs-comment">// 创建一个数据中心</span><br><span class="hljs-keyword">var</span> dataHub = <span class="hljs-keyword">new</span> <span class="hljs-title class_">DataHub</span>();<br><br><span class="hljs-comment">// 创建一个下载事件管理器</span><br><span class="hljs-keyword">var</span> downloadManager = <span class="hljs-keyword">new</span> <span class="hljs-title class_">DownloadManager</span>();<br><br><span class="hljs-comment">// 创建一个下载器</span><br><span class="hljs-keyword">var</span> dataLoader = <span class="hljs-keyword">function</span>(<span class="hljs-params">eventType, taskId, url</span>) &#123;<br>  <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&#x27;Task &#x27;</span> + taskId + <span class="hljs-string">&#x27; load data from &#x27;</span> + url);<br>&#125;<br><br><span class="hljs-comment">// 用户来请求数据了，从 downloadManager 订阅事件</span><br><span class="hljs-keyword">var</span> downloadTask1 = downloadManager.<span class="hljs-title function_">subscribe</span>(<span class="hljs-string">&#x27;dataReady&#x27;</span>, dataLoader);<br><span class="hljs-keyword">var</span> downloadTask2 = downloadManager.<span class="hljs-title function_">subscribe</span>(<span class="hljs-string">&#x27;dataReady2&#x27;</span>, dataLoader);<br><br><span class="hljs-comment">// 数据打包完成了</span><br>dataHub.<span class="hljs-title function_">notify</span>(<span class="hljs-string">&#x27;http://somedomain.someaddress&#x27;</span>, <span class="hljs-keyword">function</span>(<span class="hljs-params">url</span>)&#123;<br>  <span class="hljs-comment">// 向 downloadManager 发布一个事件</span><br>  downloadManager.<span class="hljs-title function_">publish</span>(<span class="hljs-string">&#x27;dataReady&#x27;</span>, url);<br>&#125;);<br><br>dataHub.<span class="hljs-title function_">notify</span>(<span class="hljs-string">&#x27;http://somedomain2.someaddress&#x27;</span>, <span class="hljs-keyword">function</span>(<span class="hljs-params">url</span>)&#123;<br>  <span class="hljs-comment">// 向 downloadManager 发布一个事件</span><br>  downloadManager.<span class="hljs-title function_">publish</span>(<span class="hljs-string">&#x27;dataReady2&#x27;</span>, url);<br>&#125;);<br></code></pre></td></tr></table></figure>
+
+<h3 id="3-2-4-结果"><a href="#3-2-4-结果" class="headerlink" title="3.2.4 结果"></a>3.2.4 结果</h3><figure class="highlight gradle"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs gradle"><span class="hljs-keyword">Task</span> <span class="hljs-number">0</span> load data <span class="hljs-keyword">from</span> http:<span class="hljs-comment">//somedomain.someaddress</span><br><span class="hljs-keyword">Task</span> <span class="hljs-number">1</span> load data <span class="hljs-keyword">from</span> http:<span class="hljs-comment">//somedomain2.someaddress</span><br></code></pre></td></tr></table></figure>
+
+
+<h1 id="4-区别"><a href="#4-区别" class="headerlink" title="4. 区别"></a>4. 区别</h1><p>观察者模式不需要中间件，被观察对象可以直接将事件通知给观察者。</p>
+<p>然而发布订阅模式，则需要一个中间的发布订阅管理器，来进行发布事件与订阅事件的详细方法实现。</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/%E5%89%8D%E7%AB%AF/" class="category-chain-item">前端</a>
+  
+  
+    <span>></span>
+    
+  <a href="/categories/%E5%89%8D%E7%AB%AF/JavaScript/" class="category-chain-item">JavaScript</a>
+  
+  
+
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/JS/">#JS</a>
+      
+        <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/">#设计模式</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>Javascript设计模式——观察者模式与发布订阅模式的对比</div>
+      <div>https://blog.zpangxie.top/2022/01/063597e66729.html</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>Crab</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2022年1月12日</div>
+        </div>
+      
+      
+      <div class="license-meta-item">
+        <div>许可协议</div>
+        <div>
+          
+            
+            
+              <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+              <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                <i class="iconfont icon-by"></i>
+              </span>
+              </a>
+            
+          
+        </div>
+      </div>
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2022/02/f308d3924314.html" title="NodeJS爬虫基础原理及实战">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">NodeJS爬虫基础原理及实战</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2021/12/da353d30788b.html" title="原生AJAX的使用">
+                        <span class="hidden-mobile">原生AJAX的使用</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+      <a href="https://zpangxie.github.io/" target="_blank" rel="nofollow noopener"><span>Crab</span></a>
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      headingSelector : CONFIG.toc.headingSelector || 'h1,h2,h3,h4,h5,h6',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      collapseDepth   : CONFIG.toc.collapseDepth || 0,
+      scrollSmooth    : true,
+      headingsOffset  : -boardTop
+    });
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.10/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

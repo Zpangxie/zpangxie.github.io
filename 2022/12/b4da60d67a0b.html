@@ -1,0 +1,663 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/crab.jpg">
+  <link rel="icon" href="/img/crab.jpg">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="Crab">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="1. 前言网页回流与重绘有时可能会比 JS 的执行消耗更长的时间，比如插入十万条数据，这可能是一个伪需求，但是也是一个值得思考的命题。接下来我们的例子中的 html 都用如下的结构，点击页面按钮后，将 100000 个 li 插入到 ul 中去： 1234&lt;body&gt;  &lt;button onclick&#x3D;&quot;pushLi()&quot;&gt;添加数据&lt;&#x2F;button">
+<meta property="og:type" content="article">
+<meta property="og:title" content="使用requestAnimationFrame平滑无卡顿插入100000条数据">
+<meta property="og:url" content="https://blog.zpangxie.top/2022/12/b4da60d67a0b.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="1. 前言网页回流与重绘有时可能会比 JS 的执行消耗更长的时间，比如插入十万条数据，这可能是一个伪需求，但是也是一个值得思考的命题。接下来我们的例子中的 html 都用如下的结构，点击页面按钮后，将 100000 个 li 插入到 ul 中去： 1234&lt;body&gt;  &lt;button onclick&#x3D;&quot;pushLi()&quot;&gt;添加数据&lt;&#x2F;button">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://i.loli.net/2019/12/02/a6gsRlMCG5jmk9p.png">
+<meta property="og:image" content="https://i.loli.net/2019/12/02/m9awpHG2cKPbBdf.png">
+<meta property="og:image" content="https://i.loli.net/2019/12/02/1tZNFeqbydKLRV2.gif">
+<meta property="og:image" content="https://i.loli.net/2019/12/02/2P7WbHKjuGx4MUd.png">
+<meta property="og:image" content="https://i.loli.net/2019/12/03/uOM1wCa4cFpsg9b.png">
+<meta property="og:image" content="https://i.loli.net/2019/12/03/iRrIjK9nA6Sadyv.png">
+<meta property="og:image" content="https://i.loli.net/2019/12/03/aiKUjVTt5uGYDJ7.png">
+<meta property="og:image" content="https://i.loli.net/2019/12/03/K8YNJ9ZkdtsObSG.gif">
+<meta property="og:image" content="https://i.loli.net/2019/12/03/puX2Uh6t8nHbIP7.png">
+<meta property="og:image" content="https://i.loli.net/2019/12/03/iq3aeGwyQpcE6lf.png">
+<meta property="article:published_time" content="2022-12-02T14:17:09.000Z">
+<meta property="article:modified_time" content="2023-08-11T03:04:50.949Z">
+<meta property="article:author" content="Crab">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://i.loli.net/2019/12/02/a6gsRlMCG5jmk9p.png">
+  
+  
+  
+  <title>使用requestAnimationFrame平滑无卡顿插入100000条数据 - Hexo</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"blog.zpangxie.top","root":"/","version":"1.9.2","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.2.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Crab-Blog</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              &nbsp;<i class="iconfont icon-search"></i>&nbsp;
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="使用requestAnimationFrame平滑无卡顿插入100000条数据"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2022-12-02 22:17" pubdate>
+          2022年12月2日 晚上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          4.5k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          38 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">使用requestAnimationFrame平滑无卡顿插入100000条数据</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h1 id="1-前言"><a href="#1-前言" class="headerlink" title="1. 前言"></a>1. 前言</h1><p>网页回流与重绘有时可能会比 JS 的执行消耗更长的时间，比如插入十万条数据，这可能是一个伪需求，但是也是一个值得思考的命题。接下来我们的例子中的 html 都用如下的结构，点击页面按钮后，将 100000 个 <code>li</code> 插入到 <code>ul</code> 中去：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs html"><span class="hljs-tag">&lt;<span class="hljs-name">body</span>&gt;</span><br>  <span class="hljs-tag">&lt;<span class="hljs-name">button</span> <span class="hljs-attr">onclick</span>=<span class="hljs-string">&quot;pushLi()&quot;</span>&gt;</span>添加数据<span class="hljs-tag">&lt;/<span class="hljs-name">button</span>&gt;</span><br>  <span class="hljs-tag">&lt;<span class="hljs-name">ul</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">ul</span>&gt;</span><br><span class="hljs-tag">&lt;/<span class="hljs-name">body</span>&gt;</span><br></code></pre></td></tr></table></figure>
+
+<p>我们先来看一下直接暴力插入 100000 条数据的写法：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs js"><span class="hljs-keyword">function</span> <span class="hljs-title function_">pushLi</span>(<span class="hljs-params"></span>) &#123;<br>  <span class="hljs-keyword">const</span> startTime = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Date</span>().<span class="hljs-title function_">valueOf</span>()<br>  <span class="hljs-keyword">const</span> count = <span class="hljs-number">100000</span><br>  <span class="hljs-keyword">const</span> ul = <span class="hljs-variable language_">document</span>.<span class="hljs-title function_">querySelector</span>(<span class="hljs-string">&quot;ul&quot;</span>)<br>  <span class="hljs-keyword">for</span> (<span class="hljs-keyword">let</span> i = <span class="hljs-number">0</span>; i &lt; count; i++) &#123;<br>    <span class="hljs-keyword">const</span> li = <span class="hljs-variable language_">document</span>.<span class="hljs-title function_">createElement</span>(<span class="hljs-string">&#x27;li&#x27;</span>)<br>    li.<span class="hljs-property">innerText</span> = <span class="hljs-title class_">Math</span>.<span class="hljs-title function_">random</span>() * count<br>    ul.<span class="hljs-title function_">appendChild</span>(li)<br>  &#125;<br>  <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-keyword">new</span> <span class="hljs-title class_">Date</span>().<span class="hljs-title function_">valueOf</span>() - startTime);<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>点击按钮，页面大概消耗了 5s 的时间才把内容渲染出来，但是我们看控制台打印出的时间差只有 1s 左右。</p>
+<p><img src="https://i.loli.net/2019/12/02/a6gsRlMCG5jmk9p.png" srcset="/img/loading.gif" lazyload></p>
+<p>这是因为浏览器本身存在优化机制，如果没进行一次 <code>appendChild</code> 操作就渲染一次页面，那么就要渲染十万次页面，这样是非常消耗性能的。所以浏览器就会将渲染任务缓存到队列中，在一定的范围内将页面的所有操作合并为一个渲染操作。但是十万条数据仍是一个庞大的数据，因此就会出现 js 已经计算完成，但是渲染仍为完成的情况，此时页面会卡住不动。</p>
+<h1 id="2-初级优化"><a href="#2-初级优化" class="headerlink" title="2. 初级优化"></a>2. 初级优化</h1><p><code>document.createDocumentFragment()</code> 可以创建一个片段，这个片段并没有插入的 DOM 结构中，因此就省去了 DOM 查询的步骤，我们将创建的 <code>li</code> 没次都插入到 <code>fragment</code> 中，而不是每次都插入页面的 DOM 中，最后再将 fragment 插入到页面的 <code>ul</code> 中，这样的话就能一定程度提升 js 运算的性能，从而优化整体效果：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs js"><span class="hljs-keyword">function</span> <span class="hljs-title function_">pushLi</span>(<span class="hljs-params"></span>) &#123;<br>  <span class="hljs-keyword">const</span> startTime = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Date</span>().<span class="hljs-title function_">valueOf</span>()<br>  <span class="hljs-keyword">const</span> count = <span class="hljs-number">100000</span><br>  <span class="hljs-keyword">const</span> ul = <span class="hljs-variable language_">document</span>.<span class="hljs-title function_">querySelector</span>(<span class="hljs-string">&quot;ul&quot;</span>)<br>  <span class="hljs-keyword">const</span> fragment = <span class="hljs-variable language_">document</span>.<span class="hljs-title function_">createDocumentFragment</span>()<br>  <span class="hljs-keyword">for</span> (<span class="hljs-keyword">let</span> i = <span class="hljs-number">0</span>; i &lt; count; i++) &#123;<br>    <span class="hljs-keyword">const</span> li = <span class="hljs-variable language_">document</span>.<span class="hljs-title function_">createElement</span>(<span class="hljs-string">&#x27;li&#x27;</span>)<br>    li.<span class="hljs-property">innerText</span> = <span class="hljs-title class_">Math</span>.<span class="hljs-title function_">random</span>() * count<br>    fragment.<span class="hljs-title function_">appendChild</span>(li)<br>  &#125;<br>  ul.<span class="hljs-title function_">appendChild</span>(fragment)<br>  <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-keyword">new</span> <span class="hljs-title class_">Date</span>().<span class="hljs-title function_">valueOf</span>() - startTime);<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>我们在控制台中查看打印的时间差，可以发现 JS 的执行速度提升了一倍：</p>
+<p><img src="https://i.loli.net/2019/12/02/m9awpHG2cKPbBdf.png" srcset="/img/loading.gif" lazyload></p>
+<p>那么渲染速度是否会因此提升呢？很遗憾并不，渲染仍在消耗相同的时间，因为我们最终插入页面的数据仍然是十万条，对于浏览器页面来说，仍是一次渲染十万条数据。</p>
+<h1 id="3-节流插入"><a href="#3-节流插入" class="headerlink" title="3. 节流插入"></a>3. 节流插入</h1><p>我们换一种思路，既然一次插入 100000 条数据会给浏览器造成巨大的压力，那么每次只要少渲染一点不久可以了吗。比如说我们在 100ms 渲染 100 条数据，十万条数据分 1000 次插入，也就是耗时 1000 * 100s，虽然耗时相比之下长了，但是页面不卡顿了，用户点击之后马上就可以看到数据，同时数据也在不断增长，直到十万条数据都出来，浏览器便可以停止渲染，这比让用户盯着屏幕卡顿 10 秒的效果好的多。</p>
+<p>于是我们来优化一下写法：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><code class="hljs js"><span class="hljs-keyword">function</span> <span class="hljs-title function_">pushLi</span>(<span class="hljs-params"></span>) &#123;<br>  <span class="hljs-keyword">const</span> ul = <span class="hljs-variable language_">document</span>.<span class="hljs-title function_">querySelector</span>(<span class="hljs-string">&quot;ul&quot;</span>)<br>  <span class="hljs-keyword">const</span> total = <span class="hljs-number">100000</span><br>  <span class="hljs-keyword">const</span> once = <span class="hljs-number">100</span><br>  <span class="hljs-keyword">const</span> loopCount = total / once<br>  <span class="hljs-keyword">let</span> countOfRender = <span class="hljs-number">0</span><br>  <span class="hljs-keyword">function</span> <span class="hljs-title function_">add</span>(<span class="hljs-params"></span>) &#123;<br>    <span class="hljs-comment">// 每 100 毫秒添加 100 条 li</span><br>    <span class="hljs-built_in">setTimeout</span>(<span class="hljs-function">() =&gt;</span> &#123;<br>      <span class="hljs-keyword">const</span> fragment = <span class="hljs-variable language_">document</span>.<span class="hljs-title function_">createDocumentFragment</span>()<br>      <span class="hljs-keyword">for</span> (<span class="hljs-keyword">let</span> i = <span class="hljs-number">0</span>; i &lt; once; i++) &#123;<br>        <span class="hljs-keyword">const</span> li = <span class="hljs-variable language_">document</span>.<span class="hljs-title function_">createElement</span>(<span class="hljs-string">&quot;li&quot;</span>)<br>        li.<span class="hljs-property">innerText</span> = <span class="hljs-title class_">Math</span>.<span class="hljs-title function_">random</span>() * total<br>        fragment.<span class="hljs-title function_">appendChild</span>(li)<br>      &#125;<br>      ul.<span class="hljs-title function_">appendChild</span>(fragment)<br>      <span class="hljs-comment">// 当前渲染到第几次</span><br>      countOfRender += <span class="hljs-number">1</span><br>      <span class="hljs-comment">// 如果没有渲染完成就递归再渲染一次</span><br>      <span class="hljs-keyword">if</span> (countOfRender &lt; loopCount) &#123;<br>        <span class="hljs-title function_">add</span>()<br>      &#125;<br>    &#125;, <span class="hljs-number">100</span>);<br>  &#125;<br>  <span class="hljs-title function_">add</span>()<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p><img src="https://i.loli.net/2019/12/02/1tZNFeqbydKLRV2.gif" srcset="/img/loading.gif" lazyload></p>
+<p>这样页面就不会卡顿了，但是这样的渲染并没有用到浏览器的性能极限。想想假如我们要想提高渲染效率，要从哪里下手呢？就是去将每次渲染的间隔时间尽量最小化，我们上面的例子使用了 100ms 这其实是不够极限的，只要时间段够短并且浏览器能渲染得过来，那就是合理的。那么最小到哪个阈值呢，我们都知道大部分屏幕的刷新率是 60hz 也就是每秒刷新 60 次，对于我们页面来说极限就是每秒渲染 60 次。我们用 100&#x2F;60 得出每间隔 16ms 刷新一次是浏览器显示的极限，我们可以将 <code>setTimeout</code> 的时间间隔设置为 16 即可。</p>
+<p>但是当我得意的将 <code>setTimeout</code> 的延时设置为 16ms 时突然发现事情并不对… …</p>
+<p><img src="https://i.loli.net/2019/12/02/2P7WbHKjuGx4MUd.png" srcset="/img/loading.gif" lazyload></p>
+<p>发现改为了 16ms 之后，按理说，数据增长应该是平滑的，然而改了之后还是跟之前一样数据是一卡一卡的。emmmm，我知道 setTimeout 有最小值，查了一下最小值为 4ms，这也不对啊。上 MDN 查阅了一下发现了一篇文章 <a target="_blank" rel="noopener" href="https://developer.mozilla.org/zh-CN/docs/Web/API/Window/setTimeout#%E5%AE%9E%E9%99%85%E5%BB%B6%E6%97%B6%E6%AF%94%E8%AE%BE%E5%AE%9A%E5%80%BC%E6%9B%B4%E4%B9%85%E7%9A%84%E5%8E%9F%E5%9B%A0%EF%BC%9A%E6%9C%80%E5%B0%8F%E5%BB%B6%E8%BF%9F%E6%97%B6%E9%97%B4">实际延时比设定值更久的原因：最小延迟时间</a>。</p>
+<p>MDN 告诉我们，多次嵌套 <code>setTimeout</code> 可能会导致计时器的时间推迟。我们添加一个记录值，来记录上次渲染结束到本次渲染结束的时间间隔，也就是实际 setTimeout 延迟的时间，发现果然随着嵌套的深度，延迟执行的时间越来越长：</p>
+<p><img src="https://i.loli.net/2019/12/03/uOM1wCa4cFpsg9b.png" srcset="/img/loading.gif" lazyload alt="刚开始的耗时"></p>
+<p><img src="https://i.loli.net/2019/12/03/iRrIjK9nA6Sadyv.png" srcset="/img/loading.gif" lazyload alt="当嵌套越来越深时"></p>
+<p>所以为了避免嵌套，那么我们就只能利用异步编程，来逐个循环执行定时器了，改写一下我们之前写好的方法：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><code class="hljs js"><span class="hljs-keyword">function</span> <span class="hljs-title function_">pushLi</span>(<span class="hljs-params"></span>) &#123;<br>  <span class="hljs-keyword">const</span> ul = <span class="hljs-variable language_">document</span>.<span class="hljs-title function_">querySelector</span>(<span class="hljs-string">&quot;ul&quot;</span>)<br>  <span class="hljs-keyword">const</span> total = <span class="hljs-number">100000</span><br>  <span class="hljs-keyword">const</span> once = <span class="hljs-number">20</span><br>  <span class="hljs-keyword">const</span> loopCount = total / once<br>  <span class="hljs-keyword">let</span> countOfRender = <span class="hljs-number">0</span><br>  <span class="hljs-comment">// 执行定时器的方法改写为一个 promise </span><br>  <span class="hljs-keyword">function</span> <span class="hljs-title function_">add</span>(<span class="hljs-params"></span>) &#123;<br>    <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Promise</span>(<span class="hljs-function"><span class="hljs-params">resolve</span> =&gt;</span> &#123;<br>      <span class="hljs-built_in">setTimeout</span>(<span class="hljs-function">() =&gt;</span> &#123;<br>        <span class="hljs-keyword">const</span> fragment = <span class="hljs-variable language_">document</span>.<span class="hljs-title function_">createDocumentFragment</span>()<br>        <span class="hljs-keyword">for</span> (<span class="hljs-keyword">let</span> i = <span class="hljs-number">0</span>; i &lt; once; i++) &#123;<br>          <span class="hljs-keyword">const</span> li = <span class="hljs-variable language_">document</span>.<span class="hljs-title function_">createElement</span>(<span class="hljs-string">&quot;li&quot;</span>)<br>          li.<span class="hljs-property">innerText</span> = <span class="hljs-title class_">Math</span>.<span class="hljs-title function_">random</span>() * total<br>          fragment.<span class="hljs-title function_">appendChild</span>(li)<br>        &#125;<br>        ul.<span class="hljs-title function_">appendChild</span>(fragment)<br>        countOfRender += <span class="hljs-number">1</span><br>        <span class="hljs-title function_">resolve</span>()<br>      &#125;, <span class="hljs-number">16</span>);<br>    &#125;)<br>  &#125;<br>  <span class="hljs-comment">// 专门用来执行循环的函数</span><br>  <span class="hljs-comment">// 当执行完一个定时器后再开启一个新的定时器，所以定时器之间不存在嵌套</span><br>  <span class="hljs-keyword">async</span> <span class="hljs-keyword">function</span> <span class="hljs-title function_">loop</span>(<span class="hljs-params"></span>) &#123;<br>    <span class="hljs-keyword">await</span> <span class="hljs-title function_">add</span>()<br>    <span class="hljs-keyword">if</span> (countOfRender &lt; loopCount) &#123;<br>      <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(countOfRender);<br>      <span class="hljs-keyword">await</span> <span class="hljs-title function_">loop</span>()<br>    &#125;<br>  &#125;<br>  <span class="hljs-title function_">loop</span>()<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>这下就好多了，当渲染到第 287 次的时候，仍能保持时间间隔为 34ms。可以看出就算定时器没有嵌套，也会出现数据越多定时器的耗时间隔越长的情况。我分析可能会是这两个原因：要么是由于时间间隔过短，渲染没有跟上速度，导致了执行被阻塞，越来越往后推；要么是页面中还有定时器影响着新定时器的执行速度。</p>
+<p><img src="https://i.loli.net/2019/12/03/aiKUjVTt5uGYDJ7.png" srcset="/img/loading.gif" lazyload></p>
+<h1 id="4-requestAnimationFrame"><a href="#4-requestAnimationFrame" class="headerlink" title="4. requestAnimationFrame"></a>4. requestAnimationFrame</h1><p>终于到了我们的主客 <code>requestAnimationFrame</code>，其实原理跟我们上面讲的几乎是一摸一样，但是 <code>requestAnimationFrame</code> 提供了一种更优雅的方式，以及更好的优化性能，我们将上面的定时器改为 <code>requestAnimationFrame</code>，方法就变成了：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><code class="hljs js"><span class="hljs-keyword">function</span> <span class="hljs-title function_">pushLi</span>(<span class="hljs-params"></span>) &#123;<br>  <span class="hljs-keyword">const</span> total = <span class="hljs-number">100000</span><br>  <span class="hljs-keyword">const</span> once = <span class="hljs-number">20</span><br>  <span class="hljs-keyword">const</span> loopCount = total / once<br>  <span class="hljs-keyword">let</span> countOfRender = <span class="hljs-number">0</span><br>  <span class="hljs-keyword">let</span> ul = <span class="hljs-variable language_">document</span>.<span class="hljs-title function_">querySelector</span>(<span class="hljs-string">&quot;ul&quot;</span>)<br>  <span class="hljs-keyword">function</span> <span class="hljs-title function_">add</span>(<span class="hljs-params"></span>) &#123;<br>    <span class="hljs-keyword">const</span> fragment = <span class="hljs-variable language_">document</span>.<span class="hljs-title function_">createDocumentFragment</span>()<br>    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">let</span> i = <span class="hljs-number">0</span>; i &lt; once; i++) &#123;<br>      <span class="hljs-keyword">const</span> li = <span class="hljs-variable language_">document</span>.<span class="hljs-title function_">createElement</span>(<span class="hljs-string">&quot;li&quot;</span>)<br>      li.<span class="hljs-property">innerText</span> = <span class="hljs-title class_">Math</span>.<span class="hljs-title function_">random</span>() * total<br>      fragment.<span class="hljs-title function_">appendChild</span>(li)<br>    &#125;<br>    ul.<span class="hljs-title function_">appendChild</span>(fragment)<br>    countOfRender += <span class="hljs-number">1</span><br>    <span class="hljs-title function_">loop</span>()<br>  &#125;<br>  <span class="hljs-keyword">function</span> <span class="hljs-title function_">loop</span>(<span class="hljs-params"></span>) &#123;<br>    <span class="hljs-keyword">if</span> (countOfRender &lt; loopCount) &#123;<br>      <span class="hljs-variable language_">window</span>.<span class="hljs-title function_">requestAnimationFrame</span>(add)<br>    &#125;<br>  &#125;<br>  <span class="hljs-title function_">loop</span>()<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>这感觉，丝滑般流畅：</p>
+<p><img src="https://i.loli.net/2019/12/03/K8YNJ9ZkdtsObSG.gif" srcset="/img/loading.gif" lazyload></p>
+<p>但是，使用 <code>requestAnimationFrame</code> 也会出现后期时间间隔边长，也就是帧率变低的情况，也许就是因为页面数据过多造成性能的上不足导致的，但是相比与纯定时器，效果会更好一丢丢：</p>
+<p><img src="https://i.loli.net/2019/12/03/puX2Uh6t8nHbIP7.png" srcset="/img/loading.gif" lazyload alt="requestAnimationFrame 在 1100 次渲染时的耗时间隔"></p>
+<p><img src="https://i.loli.net/2019/12/03/iq3aeGwyQpcE6lf.png" srcset="/img/loading.gif" lazyload alt="setTimeout 在 1100 次渲染时的耗时间隔"></p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/%E5%89%8D%E7%AB%AF/" class="category-chain-item">前端</a>
+  
+  
+    <span>></span>
+    
+  <a href="/categories/%E5%89%8D%E7%AB%AF/JavaScript/" class="category-chain-item">JavaScript</a>
+  
+  
+
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>使用requestAnimationFrame平滑无卡顿插入100000条数据</div>
+      <div>https://blog.zpangxie.top/2022/12/b4da60d67a0b.html</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>Crab</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2022年12月2日</div>
+        </div>
+      
+      
+      <div class="license-meta-item">
+        <div>许可协议</div>
+        <div>
+          
+            
+            
+              <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+              <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                <i class="iconfont icon-by"></i>
+              </span>
+              </a>
+            
+          
+        </div>
+      </div>
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2022/12/28029806aaec.html" title="Linux指令备忘录">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">Linux指令备忘录</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2022/12/56ebbc1dcaeb.html" title="CSS3选择器的 nth-child 与 nth-of-type">
+                        <span class="hidden-mobile">CSS3选择器的 nth-child 与 nth-of-type</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+      <a href="https://zpangxie.github.io/" target="_blank" rel="nofollow noopener"><span>Crab</span></a>
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      headingSelector : CONFIG.toc.headingSelector || 'h1,h2,h3,h4,h5,h6',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      collapseDepth   : CONFIG.toc.collapseDepth || 0,
+      scrollSmooth    : true,
+      headingsOffset  : -boardTop
+    });
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.10/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>
